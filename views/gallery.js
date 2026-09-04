@@ -72,14 +72,6 @@ export function renderGallery(container) {
         </div>
 
         <div class="page-wrap">
-          <div class="filter-row">
-            <div class="type-filter">
-              <button data-type="all" class="${state.type === "all" ? "active" : ""}">Todos</button>
-              <button data-type="image" class="${state.type === "image" ? "active" : ""}">${icon("image")} Imagens</button>
-              <button data-type="video" class="${state.type === "video" ? "active" : ""}">${icon("video")} Vídeos</button>
-            </div>
-          </div>
-
           <div class="cat-filter">
             ${galleryCategories.map((c) => `<button data-cat="${c}" class="${state.category === c ? "active" : ""}">${c}</button>`).join("")}
           </div>
