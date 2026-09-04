@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FD Labs | Consultoria em Tecnologia da Informação</title>
+  <meta name="description" content="FD Consultoria oferece serviços especializados em TI: cloud computing, infraestrutura de redes, desenvolvimento de software, BI, segurança e suporte técnico." />
+  <link rel="icon" type="image/png" href="assets/logo-header.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.462.0/dist/umd/lucide.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="site-header">
+      <div class="container">
+        <a href="#/" class="brand">
+          <img src="assets/logo-header.png" alt="FD Labs" />
+        </a>
+
+        <nav class="nav-desktop">
+          <a href="#/" class="nav-link" data-path="/">Início</a>
+          <a href="#/galeria" class="nav-link" data-path="/galeria">Galeria</a>
+          <a href="#/base-de-conhecimento" class="nav-link" data-path="/base-de-conhecimento">Base de Conhecimento</a>
+          <a href="#/marketing" class="nav-link" data-path="/marketing">Marketing</a>
+          <a href="#/contato" class="nav-link" data-path="/contato">Contato</a>
+          <a href="#/contato" class="nav-cta">Fale Conosco</a>
+        </nav>
+
+        <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+
+      <div class="nav-mobile" id="nav-mobile">
+        <ul>
+          <li><a href="#/" class="nav-link" data-path="/">Início</a></li>
+          <li><a href="#/galeria" class="nav-link" data-path="/galeria">Galeria</a></li>
+          <li><a href="#/base-de-conhecimento" class="nav-link" data-path="/base-de-conhecimento">Base de Conhecimento</a></li>
+          <li><a href="#/marketing" class="nav-link" data-path="/marketing">Marketing</a></li>
+          <li><a href="#/contato" class="nav-link" data-path="/contato">Contato</a></li>
+        </ul>
+        <div class="nav-mobile-contacts">
+          <a href="tel:+553191684589"><i data-lucide="phone"></i> (31) 9 9168-4589</a>
+          <a href="mailto:contato@fdconsultoria.tech"><i data-lucide="mail"></i> contato@fdconsultoria.tech</a>
+        </div>
+      </div>
+    </header>
+
+    <main id="app"></main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <img src="assets/logo-footer.png" alt="FD Labs" />
+            <p>Transformando negócios por meio de soluções tecnológicas inovadoras e consultoria especializada em TI.</p>
+            <div class="footer-socials">
+              <a href="#"><i data-lucide="linkedin"></i></a>
+              <a href="#"><i data-lucide="instagram"></i></a>
+              <a href="#"><i data-lucide="youtube"></i></a>
+              <a href="#"><i data-lucide="facebook"></i></a>
+            </div>
+          </div>
+
+          <div class="footer-col">
+            <h4>Navegação</h4>
+            <ul>
+              <li><a href="#/"><span class="arrow">›</span> Início</a></li>
+              <li><a href="#/galeria"><span class="arrow">›</span> Galeria</a></li>
+              <li><a href="#/base-de-conhecimento"><span class="arrow">›</span> Base de Conhecimento</a></li>
+              <li><a href="#/marketing"><span class="arrow">›</span> Marketing</a></li>
+              <li><a href="#/contato"><span class="arrow">›</span> Contato</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Serviços</h4>
+            <ul>
+              <li>Consultoria em TI</li>
+              <li>Governança de Dados / LGPD</li>
+              <li>Infraestrutura de Redes</li>
+              <li>Cloud Computing</li>
+              <li>Transformação Digital</li>
+              <li>Suporte Técnico</li>
+            </ul>
+          </div>
+
+          <div class="footer-col contact">
+            <h4>Contato</h4>
+            <ul>
+              <li><i data-lucide="map-pin"></i> <span>Rua Aspásia, 431 s. 302 - Caiçara<br />Belo Horizonte – MG, 30720-570</span></li>
+              <li><a href="tel:+553191684589"><i data-lucide="phone"></i> (31) 9 9168-4589</a></li>
+              <li><a href="mailto:contato@fdconsultoria.tech"><i data-lucide="mail"></i> contato@fdconsultoria.tech</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="container">
+          <p id="footer-year">© FD Consultoria em Tecnologia da Informação. Todos os direitos reservados.</p>
+          <p class="cnpj">CNPJ: 00.000.000/0001-00</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module">
+    import { initRouter } from "./router.js";
+
+    document.getElementById("footer-year").textContent =
+      `© ${new Date().getFullYear()} FD Consultoria em Tecnologia da Informação. Todos os direitos reservados.`;
+
+    const toggle = document.getElementById("nav-toggle");
+    const mobileMenu = document.getElementById("nav-mobile");
+    toggle.addEventListener("click", () => {
+      mobileMenu.classList.toggle("open");
+    });
+
+    initRouter();
+  </script>
+</body>
+</html>
