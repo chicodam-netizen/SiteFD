@@ -1,0 +1,9 @@
+{
+  "name": "sitefd",
+  "private": true,
+  "version": "1.0.0",
+  "description": "FD Labs website - static site with a Vercel serverless function for form email delivery",
+  "dependencies": {
+    "nodemailer": "^10.0.0"
+  }
+}

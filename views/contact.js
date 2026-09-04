@@ -5,6 +5,7 @@ let form = { name: "", email: "", phone: "", company: "", city: "", uf: "", serv
 let errors = {};
 let submitted = false;
 let loading = false;
+let sendError = false;
 let ticket = "";
 
 function resetState() {
@@ -12,6 +13,7 @@ function resetState() {
   errors = {};
   submitted = false;
   loading = false;
+  sendError = false;
   ticket = "";
 }
 
@@ -125,6 +127,10 @@ export function renderContact(container) {
           ${errors.message ? `<p class="error-text">${errors.message}</p>` : ""}
         </div>
 
+        <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" aria-hidden="true" />
+
+        ${sendError ? `<p class="error-text" style="margin-bottom:12px;">Não conseguimos enviar sua mensagem agora. Tente novamente em instantes ou fale pelo WhatsApp/telefone acima.</p>` : ""}
+
         <button type="submit" class="btn btn-green btn-block" ${loading ? "disabled" : ""}>
           ${loading ? `<span class="spinner"></span> Enviando...` : `${icon("send")} Enviar Mensagem`}
         </button>
@@ -168,16 +174,30 @@ export function renderContact(container) {
         if (!form.uf) errs.uf = "Obrigatório";
         if (!form.message.trim()) errs.message = "Descreva sua necessidade";
         errors = errs;
+        sendError = false;
 
         if (Object.keys(errs).length === 0) {
           loading = true;
           draw();
-          setTimeout(() => {
-            loading = false;
-            submitted = true;
-            ticket = "FD" + (Math.floor(Math.random() * 90000) + 10000);
-            draw();
-          }, 1200);
+
+          const honeypot = data.get("website") || "";
+          fetch("/api/send-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ type: "contact", ...form, website: honeypot }),
+          })
+            .then((res) => {
+              if (!res.ok) throw new Error("send_failed");
+              loading = false;
+              submitted = true;
+              ticket = "FD" + (Math.floor(Math.random() * 90000) + 10000);
+              draw();
+            })
+            .catch(() => {
+              loading = false;
+              sendError = true;
+              draw();
+            });
         } else {
           draw();
         }

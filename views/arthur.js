@@ -3,10 +3,12 @@ import { icon } from "../icons.js";
 
 let selectedServices = [];
 let formData = { name: "", company: "", message: "" };
+let sendStatus = null; // null | "sending" | "sent" | "error"
 
 export function renderArthur(container) {
   selectedServices = [];
   formData = { name: "", company: "", message: "" };
+  sendStatus = null;
 
   const draw = () => {
     container.innerHTML = `
@@ -133,10 +135,15 @@ export function renderArthur(container) {
                 <label>Mensagem</label>
                 <textarea name="message" rows="5" placeholder="Conte mais sobre seu projeto...">${formData.message}</textarea>
               </div>
+              <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" aria-hidden="true" />
+
               <div class="dual-actions">
-                <button type="button" class="btn btn-purple">${icon("mail")} Falar com Arthur</button>
-                <button type="button" class="btn btn-green">${icon("users")} Falar com a equipe FD</button>
+                <button type="button" id="send-arthur" class="btn btn-purple" ${sendStatus === "sending" ? "disabled" : ""}>${icon("mail")} Falar com Arthur</button>
+                <button type="button" id="send-team" class="btn btn-green" ${sendStatus === "sending" ? "disabled" : ""}>${icon("users")} Falar com a equipe FD</button>
               </div>
+              ${sendStatus === "sent" ? `<p style="color:var(--success);font-size:0.85rem;text-align:center;margin-top:8px;">${icon("check-circle-2")} Mensagem enviada! Retornaremos em breve.</p>` : ""}
+              ${sendStatus === "error" ? `<p class="error-text" style="text-align:center;margin-top:8px;">Não conseguimos enviar agora. Tente o WhatsApp abaixo.</p>` : ""}
+              ${sendStatus === "missing" ? `<p class="error-text" style="text-align:center;margin-top:8px;">Preencha ao menos nome e mensagem.</p>` : ""}
               <div class="center-pt">
                 <a class="btn btn-whatsapp" href="https://wa.me/5511999999999" target="_blank" rel="noopener noreferrer">${icon("message-circle")} Chamar no WhatsApp</a>
               </div>
@@ -176,6 +183,43 @@ export function renderArthur(container) {
         if (name) formData[name] = e.target.value;
       });
     }
+
+    const sendMessage = (target) => {
+      if (!formData.name.trim() || !formData.message.trim()) {
+        sendStatus = "missing";
+        draw();
+        return;
+      }
+      sendStatus = "sending";
+      draw();
+
+      const honeypot = form ? form.querySelector('[name="website"]').value : "";
+      fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "arthur",
+          name: formData.name,
+          company: formData.company,
+          message: `[Direcionado a: ${target}]\n\n${formData.message}`,
+          services: arthurServices.filter((s) => selectedServices.includes(s.id)).map((s) => s.title).join(", "),
+          website: honeypot,
+        }),
+      })
+        .then((res) => {
+          sendStatus = res.ok ? "sent" : "error";
+          draw();
+        })
+        .catch(() => {
+          sendStatus = "error";
+          draw();
+        });
+    };
+
+    const btnArthur = container.querySelector("#send-arthur");
+    if (btnArthur) btnArthur.addEventListener("click", () => sendMessage("Arthur"));
+    const btnTeam = container.querySelector("#send-team");
+    if (btnTeam) btnTeam.addEventListener("click", () => sendMessage("Equipe FD"));
   };
 
   draw();

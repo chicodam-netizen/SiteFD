@@ -154,6 +154,7 @@ export function renderKnowledge(container) {
                 ${state.errors.uf ? `<p class="error-text">${state.errors.uf}</p>` : ""}
               </div>
             </div>
+            <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" aria-hidden="true" />
             <button type="submit" class="btn btn-green btn-block">${icon("unlock")} Acessar Base de Conhecimento</button>
             <p class="form-hint">Seus dados são utilizados apenas para personalizar seu acesso. Não fazemos spam.</p>
           </form>
@@ -253,6 +254,13 @@ export function renderKnowledge(container) {
         if (Object.keys(errs).length === 0) {
           state.submitted = true;
           draw();
+
+          fetch("/api/send-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ type: "knowledge", ...state.form, website: data.get("website") || "" }),
+          }).catch((err) => console.warn("Falha ao notificar novo cadastro na Base de Conhecimento:", err));
+
           setTimeout(() => {
             state.hasAccess = true;
             draw();
