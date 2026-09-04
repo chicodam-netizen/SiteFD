@@ -45,11 +45,9 @@ export const certifications = ["AWS Certified", "Azure Expert", "Cisco Partner",
 
 // ---------- Gallery ----------
 
-export const galleryCategories = ["Todos", "Infraestrutura", "Segurança", "Software", "BI & Analytics", "Capacitação", "Cloud", "Consultoria"];
+export const galleryCategories = ["Todos", "Software", "BI & Analytics", "Capacitação", "Cloud", "Consultoria"];
 
 export const mediaItems = [
-  { id: 1, type: "image", src: "https://images.unsplash.com/photo-1762163516269-3c143e04175c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080", thumb: "https://images.unsplash.com/photo-1762163516269-3c143e04175c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400", title: "Data Center Tier III", category: "Infraestrutura", description: "Implementação de data center com alta disponibilidade para cliente do setor financeiro." },
-  { id: 2, type: "image", src: "https://images.unsplash.com/photo-1762340916350-ad5a3d620c16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080", thumb: "https://images.unsplash.com/photo-1762340916350-ad5a3d620c16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400", title: "Centro de Operações de Segurança", category: "Segurança", description: "SOC implementado para monitoramento proativo de ameaças cibernéticas." },
   { id: 4, type: "image", src: "https://images.unsplash.com/photo-1607971422532-73f9d45d7a47?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080", thumb: "https://images.unsplash.com/photo-1607971422532-73f9d45d7a47?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400", title: "Squad de Desenvolvimento", category: "Software", description: "Equipe ágil desenvolvendo sistemas customizados para automação de processos." },
   { id: 5, type: "image", src: "https://images.unsplash.com/photo-1759661966728-4a02e3c6ed91?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080", thumb: "https://images.unsplash.com/photo-1759661966728-4a02e3c6ed91?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400", title: "Dashboard de Business Intelligence", category: "BI & Analytics", description: "Plataforma de BI com visualização de dados em tempo real para tomada de decisões." },
   { id: 6, type: "image", src: "https://images.unsplash.com/photo-1728933102332-a4f1a281a621?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080", thumb: "https://images.unsplash.com/photo-1728933102332-a4f1a281a621?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400", title: "Treinamento de Equipes", category: "Capacitação", description: "Workshop de segurança da informação e boas práticas de TI para equipes corporativas." },
