@@ -1,4 +1,4 @@
-import { services, stats, whyUs, certifications, homeImages } from "../data.js";
+import { services, stats, whyUs, homeImages } from "../data.js";
 import { icon } from "../icons.js";
 
 export function renderHome(container) {
@@ -67,23 +67,6 @@ export function renderHome(container) {
             <div class="label">${s.label}</div>
           </div>
         `).join("")}
-      </div>
-    </section>
-
-    <section class="section bg-1">
-      <div class="feature-grid">
-        <div class="feature-media muted">
-          <img src="${homeImages.infra}" alt="Infraestrutura TI" />
-        </div>
-        <div>
-          <span class="eyebrow">INFRAESTRUTURA</span>
-          <h2 class="section-title">Infraestrutura robusta para seu negócio</h2>
-          <p style="color:var(--gray-400);line-height:1.7;margin-bottom:16px;">Projetamos e implementamos infraestruturas de TI escaláveis e seguras, desde data centers locais até ambientes híbridos e multi-cloud.</p>
-          <p style="color:var(--gray-400);line-height:1.7;margin-bottom:24px;">Nossa equipe certificada garante alta disponibilidade, redundância e proteção dos seus dados críticos, com monitoramento proativo 24 horas por dia.</p>
-          <div class="cert-tags">
-            ${certifications.map((c) => `<span>${c}</span>`).join("")}
-          </div>
-        </div>
       </div>
     </section>
 
