@@ -8,6 +8,7 @@ import { renderKnowledge } from "./views/knowledge.js";
 import { renderMarketing } from "./views/marketing.js";
 import { renderArthur } from "./views/arthur.js";
 import { renderContact } from "./views/contact.js";
+import { renderPrivacy } from "./views/privacy.js";
 import { renderNotFound } from "./views/notfound.js";
 
 const routes = {
@@ -17,6 +18,7 @@ const routes = {
   "/marketing": { render: renderMarketing, label: "Marketing" },
   "/arthur": { render: renderArthur, label: "Arthur" },
   "/contato": { render: renderContact, label: "Contato" },
+  "/privacidade": { render: renderPrivacy, label: "Política de Privacidade" },
 };
 
 function currentPath() {
