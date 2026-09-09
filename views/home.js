@@ -25,7 +25,7 @@ export function renderHome(container) {
       <div class="container">
         <div class="section-head">
           <span class="eyebrow">NOSSOS SERVIÇOS</span>
-          <h2 class="section-title">Soluções Completas em TI</h2>
+          <h2 class="section-title">Soluções Personalizadas em TI</h2>
           <p class="section-subtitle mx-auto">Oferecemos um portfólio abrangente de serviços para atender todas as necessidades tecnológicas da sua empresa.</p>
         </div>
         <div class="grid grid-3">
