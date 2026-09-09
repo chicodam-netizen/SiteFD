@@ -18,7 +18,7 @@ export const homeImages = {
 export const services = [
   { icon: "database", title: "Consultoria em Governança de Dados", desc: "Soluções personalizadas para apoio ao programa de adequação à LGPD." },
   { icon: "cloud", title: "Cloud Computing", desc: "Migração e gestão de ambientes em nuvem (AWS, Azure, GCP) com escalabilidade e alta disponibilidade." },
-  { icon: "code-2", title: "Desenvolvimento de Software", desc: "Sistemas sob medida, APIs e automações construídos com apoio de IA, unidas ao nosso amplo conhecimento em gestão de dados e processos." },
+  { icon: "code-2", title: "Desenvolvimento de Software", desc: "Sistemas personalizados, APIs e automações construídas com apoio de IA, com revisão e homologação de todos os desenvolvimentos com base em nosso amplo conhecimento em gestão de dados e processos e seguindo estritamente as melhores práticas." },
   { icon: "bar-chart-3", title: "Business Intelligence", desc: "Transformação de dados em insights estratégicos com dashboards, relatórios e análise de dados avançada." },
   { icon: "headphones", title: "Suporte e Help Desk", desc: "Atendimento técnico especializado com SLA definido, suporte remoto e on-site para toda sua equipe." },
 ];
