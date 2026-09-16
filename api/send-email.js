@@ -235,7 +235,7 @@ module.exports = async (req, res) => {
         const draftText = await generateAiDraft(body);
         if (draftText) {
           const replyMsg = buildClientReplyMessage(body, draftText);
-          await transporter.sendMail({
+          const info = await transporter.sendMail({
             from: `"FD Consultoria" <${SMTP_USER}>`,
             to: replyMsg.to,
             bcc: DRAFT_TO,
@@ -244,6 +244,13 @@ module.exports = async (req, res) => {
             text: replyMsg.text,
             html: replyMsg.html,
           });
+          // sendMail resolves (no throw) even when the destination SMTP server
+          // accepts the message for one recipient and rejects it for another
+          // (e.g. a receiving server silently dropping a low-reputation sender)
+          // — log that explicitly so it's visible in Vercel logs.
+          if (info.rejected && info.rejected.length > 0) {
+            console.error("ai reply email rejected for:", info.rejected, info.response);
+          }
         }
       } catch (err) {
         console.error("ai reply email error:", err);
