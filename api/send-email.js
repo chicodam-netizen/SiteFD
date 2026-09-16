@@ -7,7 +7,7 @@ const LOGO_URL = process.env.EMAIL_LOGO_URL || "https://fdconsultoria.tech/asset
 
 const AI_SYSTEM_PROMPT = `Você é a assistente virtual da FD Consultoria, uma empresa brasileira especializada em Governança de Dados, adequação à LGPD, Arquitetura Medallion/Lakehouse, Cloud Computing, Desenvolvimento de Software potencializado por IA, Business Intelligence e Segurança da Informação.
 
-Sua tarefa é ler a mensagem de um lead recebida pelo formulário de contato do site e redigir um RASCUNHO de e-mail de resposta para esse lead, que será revisado por um humano da FD Consultoria antes de ser enviado.
+Sua tarefa é ler a mensagem de um lead recebida pelo formulário de contato do site e redigir a resposta que será enviada AUTOMATICAMENTE e DIRETAMENTE a esse lead por e-mail, sem revisão humana antes do envio. Por isso, seja especialmente cauteloso: erros de tom, factuais ou promessas indevidas chegam direto ao cliente.
 
 Diretrizes:
 - Tom cordial, profissional e consultivo, em português do Brasil.
@@ -16,7 +16,8 @@ Diretrizes:
 - Relacione a dúvida a como os serviços da FD Consultoria podem ajudar, sem exagerar em jargão técnico.
 - Seja objetivo: um e-mail curto e direto, sem parágrafos redundantes.
 - Convide para agendar uma conversa/consultoria.
-- Não invente preços, prazos ou garantias específicas.
+- Nunca invente preços, prazos, garantias ou fatos que não estejam na mensagem do lead.
+- Se a mensagem for ambígua, incompleta ou fora do escopo dos serviços da FD, não tente adivinhar: responda de forma cordial e genérica, pedindo mais detalhes ou oferecendo agendar uma conversa para entender melhor a necessidade.
 - Assine como "Equipe FD Consultoria".
 - Responda APENAS com o corpo do e-mail em texto simples, sem assunto, sem markdown e sem comentários extras. Separe os parágrafos com uma linha em branco entre eles.`;
 
@@ -89,30 +90,7 @@ function textToHtmlParagraphs(text) {
     .join("");
 }
 
-function buildDraftMessage(body, draftText) {
-  const { name, email, phone, company, city, uf, service, message } = body;
-
-  const text = [
-    draftText,
-    "",
-    "--- ⚠ REMOVER ANTES DE ENVIAR AO CLIENTE ---",
-    `Nome: ${name}`,
-    `E-mail: ${email}`,
-    `Telefone: ${phone || "-"}`,
-    `Empresa: ${company || "-"}`,
-    `Cidade/UF: ${city} - ${uf}`,
-    `Serviço de interesse: ${service || "-"}`,
-    "",
-    "Mensagem original do lead:",
-    message,
-  ].join("\n");
-
-  const formRow = (label, value) => `
-    <tr>
-      <td style="padding:4px 12px 4px 0;color:#c99a2e;font-size:12px;white-space:nowrap;vertical-align:top;">${escapeHtml(label)}</td>
-      <td style="padding:4px 0;color:#e8d9a8;font-size:12px;">${escapeHtml(value)}</td>
-    </tr>`;
-
+function buildClientReplyMessage(body, draftText) {
   const html = `
     <div style="background:#060d1a;padding:32px 16px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;">
@@ -131,35 +109,15 @@ function buildDraftMessage(body, draftText) {
             <p style="margin:0;color:#6b7280;font-size:11px;">FD Consultoria · Rua Aspásia, 431 · Belo Horizonte - MG</p>
           </td>
         </tr>
-        <tr>
-          <td style="padding:24px 8px 0;">
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px dashed #7a5c14;border-radius:8px;">
-              <tr>
-                <td style="padding:16px 24px;">
-                  <p style="margin:0 0 12px;color:#f5c800;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">⚠ Remover antes de enviar ao cliente</p>
-                  <table role="presentation" cellpadding="0" cellspacing="0">
-                    ${formRow("Nome", name)}
-                    ${formRow("E-mail", email)}
-                    ${formRow("Telefone", phone || "-")}
-                    ${formRow("Empresa", company || "-")}
-                    ${formRow("Cidade/UF", `${city} - ${uf}`)}
-                    ${formRow("Serviço", service || "-")}
-                  </table>
-                  <p style="margin:16px 0 0;color:#c99a2e;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">Mensagem original do lead</p>
-                  <p style="margin:8px 0 0;color:#e8d9a8;font-size:13px;line-height:1.6;white-space:pre-wrap;">${escapeHtml(message)}</p>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
       </table>
     </div>`;
 
   return {
-    subject: `[Rascunho IA] Resposta para ${name}`,
-    text,
+    subject: `Re: Sua mensagem para a FD Consultoria`,
+    text: draftText,
     html,
-    replyTo: email,
+    to: body.email,
+    replyTo: MAIL_TO,
   };
 }
 
@@ -269,24 +227,26 @@ module.exports = async (req, res) => {
       text: msg.text,
     });
 
-    // Best-effort: an AI-drafted reply for human review, on top of the notification above.
-    // A failure here must never block the notification the team already got.
+    // Best-effort: an AI-generated reply sent straight to the lead, bcc'd to the
+    // team for quality monitoring. A failure here must never block the internal
+    // notification above — the team still has that to follow up manually.
     if (body.type === "contact") {
       try {
         const draftText = await generateAiDraft(body);
         if (draftText) {
-          const draftMsg = buildDraftMessage(body, draftText);
+          const replyMsg = buildClientReplyMessage(body, draftText);
           await transporter.sendMail({
-            from: `"Site FD Consultoria" <${SMTP_USER}>`,
-            to: DRAFT_TO,
-            replyTo: draftMsg.replyTo,
-            subject: draftMsg.subject,
-            text: draftMsg.text,
-            html: draftMsg.html,
+            from: `"FD Consultoria" <${SMTP_USER}>`,
+            to: replyMsg.to,
+            bcc: DRAFT_TO,
+            replyTo: replyMsg.replyTo,
+            subject: replyMsg.subject,
+            text: replyMsg.text,
+            html: replyMsg.html,
           });
         }
       } catch (err) {
-        console.error("ai draft email error:", err);
+        console.error("ai reply email error:", err);
       }
     }
 
