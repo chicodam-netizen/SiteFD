@@ -43,9 +43,9 @@ export function renderHome(container) {
     <section class="section bg-2">
       <div class="feature-grid">
         <div>
-          <span class="eyebrow">POR QUE ESCOLHER A FD?</span>
+          <span class="eyebrow">POR QUE ESCOLHER A FD Consultoria?</span>
           <h2 class="section-title">Excelência em cada projeto entregue</h2>
-          <p style="color:var(--gray-400);line-height:1.7;margin-bottom:24px;">Com mais de 20 anos de mercado, a FD Consultoria conquistou a confiança de centenas de empresas em todo o Brasil, entregando soluções tecnológicas que realmente fazem diferença.</p>
+          <p style="color:var(--gray-400);line-height:1.7;margin-bottom:24px;">Com mais de 20 anos de mercado, conquistamos a confiança de diversas empresas em todo o Brasil, entregando soluções tecnológicas que realmente fazem diferença.</p>
           <ul class="why-list">
             ${whyUs.map((item) => `<li>${icon("check-circle-2")}${item}</li>`).join("")}
           </ul>

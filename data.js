@@ -31,7 +31,7 @@ export const stats = [
 ];
 
 export const whyUs = [
-  "Equipe certificada nas principais tecnologias do mercado",
+  "Equipe certificada",
   "Atendimento personalizado e suporte dedicado",
   "Metodologia ágil com foco em resultados",
   "Parcerias com os maiores fornecedores de TI do mundo",
