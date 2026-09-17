@@ -48,13 +48,6 @@ export function renderContact(container) {
                   </div>
                 </div>
               `).join("")}
-              <div class="map-placeholder">
-                <div>
-                  ${icon("map-pin")}
-                  <p>Belo Horizonte, MG</p>
-                  <p>Rua Aspásia, 431</p>
-                </div>
-              </div>
             </div>
 
             <div>

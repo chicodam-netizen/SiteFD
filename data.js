@@ -145,8 +145,6 @@ export const contactServiceOptions = [
 ];
 
 export const contactInfo = [
-  { icon: "map-pin", title: "Endereço", lines: ["Rua Aspásia, 431 s. 302 - Caiçara", "Belo Horizonte – MG, 30720-570"] },
-  { icon: "phone", title: "Telefone", lines: ["(31) 9 9168-4589", "(31) 9 9425-9965"] },
+  { icon: "phone", title: "Telefone / WhatsApp", lines: ["(31) 9 9168-4589", "(31) 9 9425-9965"] },
   { icon: "mail", title: "E-mail", lines: ["contato@fdconsultoria.tech", "comercial@fdconsultoria.tech"] },
-  { icon: "clock", title: "Horário de Atendimento", lines: ["Segunda a Sexta: 8h às 18h"] },
 ];
