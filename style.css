@@ -324,8 +324,16 @@ p {
 }
 
 .brand img {
-  height: 56px;
+  height: 68px;
   width: auto;
+  border-radius: 10px;
+  box-shadow: 0 0 0 1px rgba(var(--green-rgb), 0.35), 0 0 22px rgba(var(--green-rgb), 0.28);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.brand:hover img {
+  box-shadow: 0 0 0 1px rgba(var(--green-rgb), 0.55), 0 0 32px rgba(var(--green-rgb), 0.42);
+  transform: translateY(-1px);
 }
 
 .nav-desktop {
