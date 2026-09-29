@@ -7,7 +7,7 @@ const LOGO_URL = process.env.EMAIL_LOGO_URL || "https://fdconsultoria.tech/asset
 
 const AI_SYSTEM_PROMPT = `Você é a assistente virtual da FD Consultoria, uma empresa brasileira especializada em Governança de Dados, adequação à LGPD, Arquitetura Medallion/Lakehouse, Cloud Computing, Desenvolvimento de Software potencializado por IA, Business Intelligence e Segurança da Informação.
 
-Sua tarefa é ler a mensagem de um lead recebida pelo formulário de contato do site e redigir um rascunho de e-mail de resposta a esse lead. O rascunho será enviado para a equipe da FD Consultoria revisar e, se estiver adequado, encaminhar ao lead — ou seja, escreva como se fosse o e-mail final, pronto para ser encaminhado sem edições.
+Sua tarefa é ler a mensagem de um lead recebida pelo formulário de contato do site e redigir a resposta que será enviada AUTOMATICAMENTE e DIRETAMENTE a esse lead por e-mail, sem revisão humana antes do envio. Por isso, seja especialmente cauteloso: erros de tom, factuais ou promessas indevidas chegam direto ao cliente.
 
 Diretrizes:
 - Tom cordial, profissional e consultivo, em português do Brasil.
@@ -90,29 +90,12 @@ function textToHtmlParagraphs(text) {
     .join("");
 }
 
-function buildReviewMessage(body, draftText) {
-  const { name, email } = body;
-
-  const text = [
-    `Encaminhar para: ${name} <${email}>`,
-    "(responder este e-mail vai direto para o lead)",
-    "",
-    "--------------------------------------------------",
-    "",
-    draftText,
-  ].join("\n");
-
+function buildClientReplyMessage(body, draftText) {
   const html = `
     <div style="background:#060d1a;padding:32px 16px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;">
         <tr>
-          <td style="background:#0c1a2e;padding:20px 32px;border-radius:12px 12px 0 0;">
-            <p style="margin:0;color:#4a9eff;font-size:12px;font-weight:700;letter-spacing:0.5px;">Encaminhar para: ${escapeHtml(name)} &lt;${escapeHtml(email)}&gt;</p>
-            <p style="margin:4px 0 0;color:#8b93a8;font-size:11px;">Responder este e-mail vai direto para o lead.</p>
-          </td>
-        </tr>
-        <tr>
-          <td style="background:#0c1a2e;padding:0 32px 24px;text-align:center;">
+          <td style="background:#0c1a2e;padding:24px 32px;border-radius:12px 12px 0 0;text-align:center;">
             <img src="${LOGO_URL}" alt="FD Consultoria" height="40" style="height:40px;width:auto;" />
           </td>
         </tr>
@@ -130,11 +113,11 @@ function buildReviewMessage(body, draftText) {
     </div>`;
 
   return {
-    subject: `Revisar e encaminhar: Resposta para ${name}`,
-    text,
+    subject: `Re: Sua mensagem para a FD Consultoria`,
+    text: draftText,
     html,
-    to: DRAFT_TO,
-    replyTo: email,
+    to: body.email,
+    replyTo: MAIL_TO,
   };
 }
 
@@ -244,32 +227,33 @@ module.exports = async (req, res) => {
       text: msg.text,
     });
 
-    // Best-effort: an AI-drafted reply sent to the team for review, ready to
-    // forward to the lead as-is. A failure here must never block the internal
+    // Best-effort: an AI-generated reply sent straight to the lead, bcc'd to the
+    // team for quality monitoring. A failure here must never block the internal
     // notification above — the team still has that to follow up manually.
     if (body.type === "contact") {
       try {
         const draftText = await generateAiDraft(body);
         if (draftText) {
-          const reviewMsg = buildReviewMessage(body, draftText);
+          const replyMsg = buildClientReplyMessage(body, draftText);
           const info = await transporter.sendMail({
             from: `"FD Consultoria" <${SMTP_USER}>`,
-            to: reviewMsg.to,
-            replyTo: reviewMsg.replyTo,
-            subject: reviewMsg.subject,
-            text: reviewMsg.text,
-            html: reviewMsg.html,
+            to: replyMsg.to,
+            bcc: DRAFT_TO,
+            replyTo: replyMsg.replyTo,
+            subject: replyMsg.subject,
+            text: replyMsg.text,
+            html: replyMsg.html,
           });
           // sendMail resolves (no throw) even when the destination SMTP server
           // accepts the message for one recipient and rejects it for another
           // (e.g. a receiving server silently dropping a low-reputation sender)
           // — log that explicitly so it's visible in Vercel logs.
           if (info.rejected && info.rejected.length > 0) {
-            console.error("ai review email rejected for:", info.rejected, info.response);
+            console.error("ai reply email rejected for:", info.rejected, info.response);
           }
         }
       } catch (err) {
-        console.error("ai review email error:", err);
+        console.error("ai reply email error:", err);
       }
     }
 
