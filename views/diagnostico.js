@@ -1,8 +1,42 @@
 import { icon } from "../icons.js";
 import { grcPillars, grcQuestionIds, gerarDiagnosticoGrc } from "../grc-data.js";
+import { lgpdPillars, lgpdQuestionIds, gerarDiagnosticoLgpd } from "../lgpd-data.js";
 
-function defaultRespostas() {
-  return Object.fromEntries(grcQuestionIds.map((id) => [id, "Não"]));
+const DIAGNOSTICOS = {
+  grc: {
+    key: "grc",
+    hubIcon: "scale",
+    hubTitle: "GRC — Governança, Riscos e Compliance",
+    hubDesc: "15 perguntas baseadas nas normas ISO 9001, ISO 31000 e ISO 37301. Descubra o nível de maturidade GRC da sua empresa em poucos minutos.",
+    introBadge: "GRC",
+    introText: [
+      `<strong>GRC</strong> (Governança, Riscos e Compliance) é um modelo integrado de gestão. Este diagnóstico avalia os três pilares com base nas normas <strong>ISO 9001</strong> (Governança), <strong>ISO 31000</strong> (Riscos) e <strong>ISO 37301</strong> (Compliance).`,
+    ],
+    pillars: grcPillars,
+    questionIds: grcQuestionIds,
+    gerarDiagnostico: gerarDiagnosticoGrc,
+    diagTipo: "GRC",
+    diagNomeCompleto: "Governança, Riscos e Compliance",
+  },
+  lgpd: {
+    key: "lgpd",
+    hubIcon: "lock",
+    hubTitle: "LGPD — Lei Geral de Proteção de Dados",
+    hubDesc: "17 perguntas sobre governança, operações, DPO e gestão de riscos. Descubra o nível de maturidade da sua empresa na adequação à LGPD.",
+    introBadge: "LGPD",
+    introText: [
+      `A <strong>LGPD</strong> (Lei 13.709/2018) regula o tratamento de dados pessoais no Brasil. Este diagnóstico avalia quatro pilares: <strong>Governança em Privacidade</strong>, <strong>Operações e Processos</strong>, <strong>DPO (Encarregado)</strong> e <strong>Gestão de Riscos</strong>.`,
+    ],
+    pillars: lgpdPillars,
+    questionIds: lgpdQuestionIds,
+    gerarDiagnostico: gerarDiagnosticoLgpd,
+    diagTipo: "LGPD",
+    diagNomeCompleto: "Lei Geral de Proteção de Dados",
+  },
+};
+
+function defaultRespostas(questionIds) {
+  return Object.fromEntries(questionIds.map((id) => [id, "Não"]));
 }
 
 let state = {};
@@ -10,7 +44,8 @@ let state = {};
 function resetState() {
   state = {
     view: "hub", // hub | intro | quiz | results
-    respostas: defaultRespostas(),
+    diagKey: null,
+    respostas: {},
     diagnostico: null,
     showLeadForm: false,
     leadForm: { empresa: "", nome: "", email: "", cargo: "" },
@@ -49,18 +84,14 @@ export function renderDiagnostico(container) {
 
   const hubMarkup = () => `
     <div class="diag-grid">
-      <div class="diag-card" data-diag="grc">
-        <div class="icon-badge">${icon("scale")}</div>
-        <h3>GRC — Governança, Riscos e Compliance</h3>
-        <p>15 perguntas baseadas nas normas ISO 9001, ISO 31000 e ISO 37301. Descubra o nível de maturidade GRC da sua empresa em poucos minutos.</p>
-        <span class="diag-cta">Iniciar diagnóstico ${icon("arrow-right")}</span>
-      </div>
-      <div class="diag-card disabled">
-        <div class="icon-badge">${icon("lock")}</div>
-        <h3>LGPD</h3>
-        <p>Diagnóstico de adequação à Lei Geral de Proteção de Dados.</p>
-        <span class="diag-cta muted">Em breve</span>
-      </div>
+      ${Object.values(DIAGNOSTICOS).map((cfg) => `
+        <div class="diag-card" data-diag="${cfg.key}">
+          <div class="icon-badge">${icon(cfg.hubIcon)}</div>
+          <h3>${cfg.hubTitle}</h3>
+          <p>${cfg.hubDesc}</p>
+          <span class="diag-cta">Iniciar diagnóstico ${icon("arrow-right")}</span>
+        </div>
+      `).join("")}
       <div class="diag-card disabled">
         <div class="icon-badge">${icon("lock")}</div>
         <h3>Maturidade em Cloud</h3>
@@ -70,74 +101,76 @@ export function renderDiagnostico(container) {
     </div>
   `;
 
-  const introMarkup = () => `
-    <div class="diag-intro">
-      <div class="icon-badge lg">${icon("scale")}</div>
-      <h2>Diagnóstico GRC</h2>
-      <p>
-        <strong>GRC</strong> (Governança, Riscos e Compliance) é um modelo integrado de gestão. Este diagnóstico
-        avalia os três pilares com base nas normas <strong>ISO 9001</strong> (Governança), <strong>ISO 31000</strong>
-        (Riscos) e <strong>ISO 37301</strong> (Compliance).
-      </p>
-      <p>São 15 perguntas, divididas em 3 blocos de 5. Para cada uma, responda com base na realidade atual da sua empresa: <strong>Não</strong>, <strong>Parcialmente</strong> ou <strong>Sim</strong>.</p>
-      <div class="diag-intro-actions">
-        <button type="button" class="btn btn-green" id="diag-start">Iniciar Diagnóstico ${icon("arrow-right")}</button>
-        <button type="button" class="btn btn-outline-gray" id="diag-back-hub">Voltar</button>
-      </div>
-    </div>
-  `;
-
-  const quizMarkup = () => `
-    <form id="diag-quiz-form">
-      ${grcPillars.map((pilar) => `
-        <div class="diag-pillar-block">
-          <div class="diag-pillar-head">
-            <div class="icon-badge">${icon(pilar.icon)}</div>
-            <div>
-              <h3>${pilar.title} <span class="diag-norm">${pilar.norm}</span></h3>
-              <p>${pilar.intro}</p>
-            </div>
-          </div>
-          ${pilar.questions.map((q, i) => `
-            <div class="diag-question">
-              <p class="diag-question-label">${pilar.key === "gov" ? "1" : pilar.key === "risco" ? "2" : "3"}.${i + 1} ${q.label}</p>
-              <p class="diag-question-help">${q.help}</p>
-              <div class="diag-radio-row">
-                ${["Não", "Parcialmente", "Sim"].map((opt) => `
-                  <label class="diag-radio ${state.respostas[q.id] === opt ? "checked" : ""}">
-                    <input type="radio" name="${q.id}" value="${opt}" ${state.respostas[q.id] === opt ? "checked" : ""} />
-                    ${opt}
-                  </label>
-                `).join("")}
-              </div>
-              <p class="diag-question-clause">${q.clause}</p>
-            </div>
-          `).join("")}
+  const introMarkup = () => {
+    const cfg = DIAGNOSTICOS[state.diagKey];
+    return `
+      <div class="diag-intro">
+        <div class="icon-badge lg">${icon(cfg.hubIcon)}</div>
+        <h2>Diagnóstico ${cfg.diagTipo}</h2>
+        ${cfg.introText.map((p) => `<p>${p}</p>`).join("")}
+        <p>São ${cfg.questionIds.length} perguntas, divididas em ${cfg.pillars.length} blocos. Para cada uma, responda com base na realidade atual da sua empresa: <strong>Não</strong>, <strong>Parcialmente</strong> ou <strong>Sim</strong>.</p>
+        <div class="diag-intro-actions">
+          <button type="button" class="btn btn-green" id="diag-start">Iniciar Diagnóstico ${icon("arrow-right")}</button>
+          <button type="button" class="btn btn-outline-gray" id="diag-back-hub">Voltar</button>
         </div>
-      `).join("")}
-      <div class="diag-intro-actions">
-        <button type="submit" class="btn btn-green btn-block">${icon("search")} Gerar Diagnóstico GRC</button>
       </div>
-    </form>
-  `;
+    `;
+  };
+
+  const quizMarkup = () => {
+    const cfg = DIAGNOSTICOS[state.diagKey];
+    return `
+      <form id="diag-quiz-form">
+        ${cfg.pillars.map((pilar, pIndex) => `
+          <div class="diag-pillar-block">
+            <div class="diag-pillar-head">
+              <div class="icon-badge">${icon(pilar.icon)}</div>
+              <div>
+                <h3>${pilar.title} <span class="diag-norm">${pilar.norm}</span></h3>
+                <p>${pilar.intro}</p>
+              </div>
+            </div>
+            ${pilar.questions.map((q, i) => `
+              <div class="diag-question">
+                <p class="diag-question-label">${pIndex + 1}.${i + 1} ${q.label}</p>
+                <p class="diag-question-help">${q.help}</p>
+                <div class="diag-radio-row">
+                  ${["Não", "Parcialmente", "Sim"].map((opt) => `
+                    <label class="diag-radio ${state.respostas[q.id] === opt ? "checked" : ""}">
+                      <input type="radio" name="${q.id}" value="${opt}" ${state.respostas[q.id] === opt ? "checked" : ""} />
+                      ${opt}
+                    </label>
+                  `).join("")}
+                </div>
+                <p class="diag-question-clause">${q.clause}</p>
+              </div>
+            `).join("")}
+          </div>
+        `).join("")}
+        <div class="diag-intro-actions">
+          <button type="submit" class="btn btn-green btn-block">${icon("search")} Gerar Diagnóstico ${cfg.diagTipo}</button>
+        </div>
+      </form>
+    `;
+  };
 
   const resultsMarkup = () => {
+    const cfg = DIAGNOSTICOS[state.diagKey];
     const d = state.diagnostico;
-    const pillarLabel = { gov: "Governança", risco: "Riscos", comp: "Compliance" };
 
     return `
       <div class="diag-results">
         <div class="diag-score-banner" style="--maturity-color:${d.maturidade.cor}">
           <div class="diag-score-value">${d.pontuacaoGeral.toFixed(1)}%</div>
           <div>
-            <p class="diag-score-label">Nível de Maturidade GRC</p>
+            <p class="diag-score-label">Nível de Maturidade ${cfg.diagTipo}</p>
             <h2 style="color:${d.maturidade.cor}">${d.maturidade.titulo}</h2>
             <p class="diag-score-desc">${d.maturidade.descricao}</p>
           </div>
         </div>
 
         <div class="diag-bars">
-          ${grcPillars.map((p) => `
+          ${cfg.pillars.map((p) => `
             <div class="diag-bar-row">
               <div class="diag-bar-label"><span>${p.title}</span><span>${d.pontuacoes[p.key].toFixed(1)}%</span></div>
               <div class="diag-bar-track"><div class="diag-bar-fill" style="width:${d.pontuacoes[p.key]}%"></div></div>
@@ -152,7 +185,7 @@ export function renderDiagnostico(container) {
         </div>
 
         <h3 class="diag-section-title">Detalhamento por Pilar</h3>
-        ${grcPillars.map((p) => `
+        ${cfg.pillars.map((p) => `
           <div class="diag-pillar-detail">
             <h4>${p.title} <span class="diag-norm">${p.norm}</span></h4>
             ${p.questions.map((q) => {
@@ -183,8 +216,8 @@ export function renderDiagnostico(container) {
         </div>
         <p class="diag-integration-note">
           ${d.integracaoBaixa
-            ? "A baixa integração entre pilares indica que governança, riscos e compliance operam de forma isolada, gerando retrabalho, inconsistências e visão fragmentada dos riscos organizacionais."
-            : "A organização demonstra boa integração entre os pilares GRC, permitindo visão holística dos riscos e maior eficiência na tomada de decisão."}
+            ? "A baixa integração entre pilares indica que as áreas avaliadas operam de forma isolada, gerando retrabalho, inconsistências e visão fragmentada dos riscos organizacionais."
+            : "A organização demonstra boa integração entre os pilares avaliados, permitindo visão holística dos riscos e maior eficiência na tomada de decisão."}
         </p>
 
         ${d.riscosIdentificados.length ? `
@@ -194,12 +227,12 @@ export function renderDiagnostico(container) {
           </ul>
         ` : `
           <h3 class="diag-section-title">Principais Riscos Identificados</h3>
-          <p class="diag-integration-note">Nenhum risco crítico identificado. A organização demonstra maturidade no programa GRC.</p>
+          <p class="diag-integration-note">Nenhum risco crítico identificado. A organização demonstra maturidade no programa de ${cfg.diagTipo}.</p>
         `}
 
         ${!state.showLeadForm ? `
           <div class="diag-cta-box">
-            <h3>Quer entender como implementar a GRC na sua empresa?</h3>
+            <h3>Quer entender como implementar a ${cfg.diagTipo} na sua empresa?</h3>
             <p>Fale com nossos especialistas e receba orientação sobre os próximos passos.</p>
             <button type="button" class="btn btn-green" id="diag-want-more">${icon("send")} Quero Saber Mais</button>
           </div>
@@ -260,6 +293,8 @@ export function renderDiagnostico(container) {
   const wire = () => {
     container.querySelectorAll("[data-diag]").forEach((card) => {
       card.addEventListener("click", () => {
+        state.diagKey = card.dataset.diag;
+        state.respostas = defaultRespostas(DIAGNOSTICOS[state.diagKey].questionIds);
         state.view = "intro";
         draw();
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -294,7 +329,8 @@ export function renderDiagnostico(container) {
     if (quizForm) {
       quizForm.addEventListener("submit", (e) => {
         e.preventDefault();
-        state.diagnostico = gerarDiagnosticoGrc(state.respostas);
+        const cfg = DIAGNOSTICOS[state.diagKey];
+        state.diagnostico = cfg.gerarDiagnostico(state.respostas);
         state.view = "results";
         draw();
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -340,12 +376,15 @@ export function renderDiagnostico(container) {
 
         const honeypot = data.get("website") || "";
         const d = state.diagnostico;
+        const cfg = DIAGNOSTICOS[state.diagKey];
 
         fetch("/api/send-email", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            type: "grc-lead",
+            type: "diag-lead",
+            diagTipo: cfg.diagTipo,
+            diagNomeCompleto: cfg.diagNomeCompleto,
             ...state.leadForm,
             diagnostico: {
               pontuacaoGeral: d.pontuacaoGeral.toFixed(1),

@@ -121,20 +121,22 @@ function buildClientReplyMessage(body, draftText) {
   };
 }
 
-function buildGrcRequesterMessage(body) {
-  const { nome, empresa, email, diagnostico } = body;
+function buildDiagRequesterMessage(body) {
+  const { nome, empresa, email, diagnostico, diagTipo, diagNomeCompleto } = body;
   const primeiroNome = (nome || "").split(" ")[0];
+  const tipo = diagTipo || "GRC";
+  const nomeCompleto = diagNomeCompleto || tipo;
   const d = diagnostico || {};
   const integracao = d.integracao || {};
   const riscos = Array.isArray(d.riscosIdentificados) ? d.riscosIdentificados : [];
 
   const introText = [
     `Olá, ${primeiroNome}, tudo bem?`,
-    `Obrigado por realizar o diagnóstico GRC (Governança, Riscos e Compliance) da FD Consultoria para a ${empresa}. Preparamos abaixo um resumo com os principais pontos da sua avaliação.`,
+    `Obrigado por realizar o diagnóstico ${tipo} (${nomeCompleto}) da FD Consultoria para a ${empresa}. Preparamos abaixo um resumo com os principais pontos da sua avaliação.`,
   ].join("\n\n");
 
   const convite = [
-    `Esses resultados merecem uma conversa mais aprofundada com nossos especialistas, para entendermos o cenário completo da ${empresa} e definirmos juntos os próximos passos para elevar a maturidade do seu programa de GRC.`,
+    `Esses resultados merecem uma conversa mais aprofundada com nossos especialistas, para entendermos o cenário completo da ${empresa} e definirmos juntos os próximos passos para elevar a maturidade do seu programa de ${tipo}.`,
     `Vamos agendar uma conversa sem compromisso? É só responder este e-mail com o melhor dia e horário para você — ficaremos muito felizes em conversar e ajudar a ${empresa} a evoluir nessa jornada.`,
   ].join("\n\n");
 
@@ -148,16 +150,16 @@ function buildGrcRequesterMessage(body) {
 
   const riscosHtml = riscos.length
     ? `<ul style="margin:0;padding-left:20px;color:#d1d5db;font-size:14px;line-height:1.7;">${riscos.map((r) => `<li style="margin-bottom:6px;">${escapeHtml(r)}</li>`).join("")}</ul>`
-    : `<p style="margin:0;color:#d1d5db;font-size:14px;line-height:1.7;">Nenhum risco crítico identificado. A organização demonstra maturidade no programa GRC.</p>`;
+    : `<p style="margin:0;color:#d1d5db;font-size:14px;line-height:1.7;">Nenhum risco crítico identificado. A organização demonstra maturidade no programa de ${tipo}.</p>`;
 
   const riscosText = riscos.length
     ? riscos.map((r) => `- ${r}`).join("\n")
-    : "Nenhum risco crítico identificado. A organização demonstra maturidade no programa GRC.";
+    : `Nenhum risco crítico identificado. A organização demonstra maturidade no programa de ${tipo}.`;
 
   const text = [
     introText,
     "",
-    `NÍVEL DE MATURIDADE GRC: ${d.pontuacaoGeral}% — ${d.nivel}`,
+    `NÍVEL DE MATURIDADE ${tipo}: ${d.pontuacaoGeral}% — ${d.nivel}`,
     d.nivelDescricao || "",
     "",
     "ANÁLISE DE INTEGRAÇÃO ENTRE PILARES",
@@ -185,7 +187,7 @@ function buildGrcRequesterMessage(body) {
             ${textToHtmlParagraphs(introText)}
 
             <div style="background:#0e1f38;border-radius:8px;padding:18px 20px;margin:4px 0 20px;">
-              <p style="margin:0 0 4px;color:#9ca3af;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;">Nível de Maturidade GRC</p>
+              <p style="margin:0 0 4px;color:#9ca3af;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;">Nível de Maturidade ${escapeHtml(tipo)}</p>
               <p style="margin:0 0 6px;color:#00c896;font-size:22px;font-weight:800;">${escapeHtml(String(d.pontuacaoGeral ?? ""))}% — ${escapeHtml(d.nivel || "")}</p>
               <p style="margin:0;color:#d1d5db;font-size:13px;line-height:1.6;">${escapeHtml(d.nivelDescricao || "")}</p>
             </div>
@@ -216,7 +218,7 @@ function buildGrcRequesterMessage(body) {
     </div>`;
 
   return {
-    subject: `Seu Diagnóstico GRC — Vamos conversar?`,
+    subject: `Seu Diagnóstico ${tipo} — Vamos conversar?`,
     text,
     html,
     to: email,
@@ -261,13 +263,13 @@ function buildMessage(body) {
     };
   }
 
-  if (type === "grc-lead") {
-    const { empresa, nome, email, cargo, diagnostico } = body;
-    if (!empresa || !nome || !email || !cargo) return null;
+  if (type === "diag-lead") {
+    const { empresa, nome, email, cargo, diagnostico, diagTipo } = body;
+    if (!empresa || !nome || !email || !cargo || !diagTipo) return null;
     return {
-      subject: `[Site FD] Interesse em Implementação de GRC — ${empresa}`,
+      subject: `[Site FD] Interesse em Implementação de ${diagTipo} — ${empresa}`,
       text: [
-        "Realizei o diagnóstico GRC no site e desejo maiores informações sobre a implementação da GRC em minha empresa.",
+        `Realizei o diagnóstico ${diagTipo} no site e desejo maiores informações sobre a implementação da ${diagTipo} em minha empresa.`,
         "",
         `Empresa: ${empresa}`,
         `Nome: ${nome}`,
@@ -378,13 +380,13 @@ module.exports = async (req, res) => {
       }
     }
 
-    // Best-effort: a summary of the GRC diagnostic (maturity level, pillar
+    // Best-effort: a summary of the diagnostic (maturity level, pillar
     // integration, top risks) sent straight to the person who requested it,
     // inviting them to a conversation. A failure here must never block the
     // internal notification above — the team still has that to follow up.
-    if (body.type === "grc-lead") {
+    if (body.type === "diag-lead") {
       try {
-        const requesterMsg = buildGrcRequesterMessage(body);
+        const requesterMsg = buildDiagRequesterMessage(body);
         const info = await transporter.sendMail({
           from: `"FD Consultoria" <${SMTP_USER}>`,
           to: requesterMsg.to,
@@ -394,10 +396,10 @@ module.exports = async (req, res) => {
           html: requesterMsg.html,
         });
         if (info.rejected && info.rejected.length > 0) {
-          console.error("grc requester email rejected for:", info.rejected, info.response);
+          console.error("diag requester email rejected for:", info.rejected, info.response);
         }
       } catch (err) {
-        console.error("grc requester email error:", err);
+        console.error("diag requester email error:", err);
       }
     }
 
