@@ -20,7 +20,7 @@ export const services = [
   { icon: "cloud", title: "Cloud Computing", desc: "Migração e gestão de ambientes em nuvem (AWS, Azure, GCP) com escalabilidade e alta disponibilidade." },
   { icon: "code-2", title: "Desenvolvimento de Software", desc: "Sistemas personalizados, APIs e automações construídas com apoio de IA, com revisão e homologação de todos os desenvolvimentos com base em nosso amplo conhecimento em gestão de dados e processos e seguindo estritamente as melhores práticas." },
   { icon: "bar-chart-3", title: "Business Intelligence", desc: "Transformação de dados em insights estratégicos com dashboards, relatórios e análise de dados avançada." },
-  { icon: "headphones", title: "Suporte e Help Desk", desc: "Atendimento técnico especializado com SLA definido, suporte remoto e on-site para toda sua equipe." },
+  { icon: "radar", title: "Monitoria de Desenvolvimento com IA", desc: "Acelere seus projetos com o apoio de um especialista. Acompanho o desenvolvimento da sua solução em tempo real, aplicando as melhores práticas, utilizando IA para otimizar código, revisar arquitetura e resolver bugs complexos. Mais agilidade, menos erros e entregas mais rápidas." },
 ];
 
 export const stats = [
