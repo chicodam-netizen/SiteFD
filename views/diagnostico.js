@@ -92,12 +92,6 @@ export function renderDiagnostico(container) {
           <span class="diag-cta">Iniciar diagnóstico ${icon("arrow-right")}</span>
         </div>
       `).join("")}
-      <div class="diag-card disabled">
-        <div class="icon-badge">${icon("lock")}</div>
-        <h3>Maturidade em Cloud</h3>
-        <p>Diagnóstico de maturidade para migração e operação em nuvem.</p>
-        <span class="diag-cta muted">Em breve</span>
-      </div>
     </div>
   `;
 

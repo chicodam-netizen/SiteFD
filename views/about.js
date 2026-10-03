@@ -29,8 +29,8 @@ export function renderAbout(container) {
             <p class="ceo-role">Fundador e CEO da FD Consultoria</p>
             <p>
               Francisco Damásio é fundador e CEO da FD Consultoria. Com mais de 20 anos de mercado em
-              Tecnologia da Informação, lidera a empresa à frente de projetos de Governança de Dados, Cloud
-              Computing e Desenvolvimento de Software potencializado por IA. É entusiasta de metodologias
+              Tecnologia da Informação, lidera a empresa à frente de projetos de Governança de Dados e
+              Desenvolvimento de Software potencializado por IA. É entusiasta de metodologias
               modernas de desenvolvimento, como a abordagem Spec Driven DevOps, e acredita que a combinação
               entre expertise técnica e inteligência artificial é o caminho para entregar soluções mais
               ágeis e confiáveis aos clientes da FD Consultoria.
