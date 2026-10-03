@@ -2508,7 +2508,7 @@ p {
   font-weight: 600;
 }
 
-.legal-doc .status-pill {
+.status-pill {
   display: inline-block;
   padding: 2px 10px;
   border-radius: 999px;
@@ -2516,9 +2516,19 @@ p {
   font-weight: 600;
 }
 
-.legal-doc .status-pill.off {
+.status-pill.off {
   background: rgba(74, 158, 255, 0.12);
   color: var(--blue);
+}
+
+.status-pill.sim {
+  background: rgba(var(--green-rgb), 0.15);
+  color: var(--green);
+}
+
+.status-pill.parcial {
+  background: rgba(245, 200, 0, 0.15);
+  color: var(--gold);
 }
 
 /* ---------- Quem Somos / CEO ---------- */
@@ -2618,6 +2628,523 @@ p {
   color: var(--gray-300);
   line-height: 1.75;
   text-align: justify;
+}
+
+/* ---------- Diagnóstico Gratuito ---------- */
+
+.diag-promo-card {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+  background: linear-gradient(120deg, rgba(0, 200, 150, 0.1) 0%, rgba(74, 158, 255, 0.08) 50%, rgba(139, 92, 246, 0.12) 100%);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.diag-promo-card:hover {
+  border-color: var(--green);
+  transform: translateY(-2px);
+}
+
+.diag-promo-icon {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--green) 0%, var(--purple) 100%);
+}
+
+.diag-promo-icon svg {
+  width: 30px;
+  height: 30px;
+  color: var(--ink);
+}
+
+.diag-promo-text {
+  flex: 1;
+  min-width: 240px;
+}
+
+.diag-promo-text h2 {
+  color: var(--white);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 6px 0 8px;
+}
+
+.diag-promo-text p {
+  color: var(--gray-400);
+  line-height: 1.6;
+  max-width: 640px;
+}
+
+.diag-promo-btn {
+  flex-shrink: 0;
+}
+
+/* Hub grid */
+
+.diag-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .diag-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.diag-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  cursor: pointer;
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.diag-card:hover {
+  border-color: var(--green);
+  transform: translateY(-3px);
+}
+
+.diag-card.disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.diag-card.disabled:hover {
+  border-color: var(--card-border);
+  transform: none;
+}
+
+.diag-card h3 {
+  color: var(--white);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 8px 0;
+}
+
+.diag-card p {
+  color: var(--gray-400);
+  line-height: 1.6;
+  flex: 1;
+  margin-bottom: 16px;
+}
+
+.diag-cta {
+  color: var(--green);
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.diag-cta.muted {
+  color: var(--gray-500);
+}
+
+/* Intro */
+
+.diag-intro {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.diag-intro .icon-badge.lg {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 20px;
+}
+
+.diag-intro .icon-badge.lg svg {
+  width: 28px;
+  height: 28px;
+}
+
+.diag-intro h2 {
+  color: var(--white);
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.diag-intro p {
+  color: var(--gray-300);
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+
+.diag-intro-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+/* Quiz */
+
+.diag-pillar-block {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin-bottom: 24px;
+}
+
+.diag-pillar-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.diag-pillar-head h3 {
+  color: var(--white);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.diag-pillar-head p {
+  color: var(--gray-400);
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.diag-norm {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(var(--blue-rgb), 0.15);
+  color: var(--blue);
+  font-size: 0.7rem;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.diag-question {
+  padding: 18px 0;
+  border-top: 1px solid var(--card-border);
+}
+
+.diag-question:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.diag-question-label {
+  color: var(--white);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.diag-question-help {
+  color: var(--gray-400);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.diag-radio-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.diag-radio {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--gray-300);
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.diag-radio input {
+  accent-color: var(--green);
+}
+
+.diag-radio.checked {
+  border-color: var(--green);
+  background: rgba(var(--green-rgb), 0.12);
+  color: var(--white);
+  font-weight: 600;
+}
+
+.diag-question-clause {
+  color: var(--gray-600);
+  font-size: 0.78rem;
+}
+
+/* Results */
+
+.diag-results {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.diag-score-banner {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-left: 4px solid var(--maturity-color, var(--green));
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin-bottom: 28px;
+}
+
+.diag-score-value {
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: var(--white);
+  flex-shrink: 0;
+}
+
+.diag-score-label {
+  color: var(--gray-500);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.diag-score-banner h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.diag-score-desc {
+  color: var(--gray-400);
+  line-height: 1.6;
+}
+
+.diag-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.diag-bar-label {
+  display: flex;
+  justify-content: space-between;
+  color: var(--gray-300);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.diag-bar-track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--input-bg);
+  overflow: hidden;
+}
+
+.diag-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--green), var(--blue));
+}
+
+.diag-counts {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  color: var(--gray-300);
+  font-size: 0.9rem;
+  margin-bottom: 36px;
+}
+
+.diag-counts .dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.diag-counts .dot.sim {
+  background: var(--green);
+}
+
+.diag-counts .dot.parcial {
+  background: var(--gold);
+}
+
+.diag-counts .dot.nao {
+  background: var(--red);
+}
+
+.diag-section-title {
+  color: var(--white);
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 32px 0 16px;
+}
+
+.diag-pillar-detail {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+
+.diag-pillar-detail h4 {
+  color: var(--white);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.diag-detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--card-border);
+}
+
+.diag-detail-row:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.diag-detail-row svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.diag-detail-row.ok svg {
+  color: var(--green);
+}
+
+.diag-detail-row.warn svg {
+  color: var(--gold);
+}
+
+.diag-detail-row.bad svg {
+  color: var(--red);
+}
+
+.diag-detail-label {
+  color: var(--gray-300);
+  font-size: 0.92rem;
+}
+
+.diag-detail-label strong {
+  color: var(--white);
+}
+
+.diag-detail-hint {
+  color: var(--gray-500);
+  font-size: 0.85rem;
+  margin-top: 2px;
+}
+
+.diag-integration {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 8px 24px;
+}
+
+.diag-integration-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-top: 1px solid var(--card-border);
+  color: var(--gray-300);
+}
+
+.diag-integration-row:first-of-type {
+  border-top: none;
+}
+
+.diag-integration-note {
+  color: var(--gray-400);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-top: 12px;
+}
+
+.diag-risks {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.diag-risks li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--gray-300);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.diag-risks svg {
+  width: 17px;
+  height: 17px;
+  color: var(--gold);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.diag-cta-box {
+  background: linear-gradient(120deg, rgba(0, 200, 150, 0.1) 0%, rgba(139, 92, 246, 0.12) 100%);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  margin-top: 36px;
+  text-align: center;
+}
+
+.diag-cta-box h3 {
+  color: var(--white);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.diag-cta-box p {
+  color: var(--gray-400);
+  margin-bottom: 20px;
+}
+
+.diag-cta-box form {
+  text-align: left;
+  max-width: 440px;
+  margin: 0 auto;
 }
 
 /* ---------- Misc utility ---------- */

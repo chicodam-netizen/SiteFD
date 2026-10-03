@@ -4,6 +4,7 @@
 
 import { renderHome } from "./views/home.js";
 import { renderAbout } from "./views/about.js";
+import { renderDiagnostico } from "./views/diagnostico.js";
 import { renderGallery } from "./views/gallery.js";
 import { renderKnowledge } from "./views/knowledge.js";
 import { renderMarketing } from "./views/marketing.js";
@@ -15,6 +16,7 @@ import { renderNotFound } from "./views/notfound.js";
 const routes = {
   "/": { render: renderHome, label: "Início" },
   "/quem-somos": { render: renderAbout, label: "Quem Somos" },
+  "/diagnostico": { render: renderDiagnostico, label: "Diagnóstico Gratuito" },
   "/galeria": { render: renderGallery, label: "Galeria" },
   "/base-de-conhecimento": { render: renderKnowledge, label: "Base de Conhecimento" },
   "/marketing": { render: renderMarketing, label: "Marketing" },

@@ -158,6 +158,24 @@ function buildMessage(body) {
     };
   }
 
+  if (type === "grc-lead") {
+    const { empresa, nome, email, cargo, diagnostico } = body;
+    if (!empresa || !nome || !email || !cargo) return null;
+    return {
+      subject: `[Site FD] Interesse em Implementação de GRC — ${empresa}`,
+      text: [
+        "Realizei o diagnóstico GRC no site e desejo maiores informações sobre a implementação da GRC em minha empresa.",
+        "",
+        `Empresa: ${empresa}`,
+        `Nome: ${nome}`,
+        `E-mail: ${email}`,
+        `Cargo: ${cargo}`,
+        diagnostico ? `Resultado do diagnóstico: ${diagnostico.pontuacaoGeral}% — ${diagnostico.nivel}` : "",
+      ].filter(Boolean).join("\n"),
+      replyTo: email,
+    };
+  }
+
   if (type === "arthur") {
     const { name, company, services, message } = body;
     if (!name || !message) return null;
@@ -211,6 +229,24 @@ module.exports = async (req, res) => {
     return;
   }
 
+  // Defense in depth: the client already caps the logo at 2MB, but never trust
+  // that alone — an oversized base64 payload here would blow past Vercel's
+  // request body limit and the SMTP server's attachment limit alike.
+  let attachments;
+  if (body.type === "grc-lead" && body.logoBase64) {
+    if (body.logoBase64.length > 3_000_000) {
+      res.status(400).json({ ok: false, error: "logo_too_large" });
+      return;
+    }
+    attachments = [
+      {
+        filename: body.logoName || "logo.png",
+        content: Buffer.from(body.logoBase64, "base64"),
+        contentType: body.logoType || undefined,
+      },
+    ];
+  }
+
   try {
     const transporter = nodemailer.createTransport({
       host: SMTP_HOST,
@@ -225,6 +261,7 @@ module.exports = async (req, res) => {
       replyTo: msg.replyTo,
       subject: msg.subject,
       text: msg.text,
+      attachments,
     });
 
     // Best-effort: an AI-generated reply sent straight to the lead, bcc'd to the

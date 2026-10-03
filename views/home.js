@@ -40,6 +40,20 @@ export function renderHome(container) {
       </div>
     </section>
 
+    <section class="section bg-1">
+      <div class="container">
+        <a href="#/diagnostico" class="diag-promo-card">
+          <div class="diag-promo-icon">${icon("scale")}</div>
+          <div class="diag-promo-text">
+            <span class="eyebrow">NOVO · GRATUITO</span>
+            <h2>Faça o Diagnóstico Gratuito da sua Empresa</h2>
+            <p>Responda a um questionário rápido baseado nas normas ISO e descubra, na hora, o nível de maturidade em GRC (Governança, Riscos e Compliance) da sua empresa.</p>
+          </div>
+          <span class="btn btn-green diag-promo-btn">Iniciar Diagnóstico ${icon("arrow-right")}</span>
+        </a>
+      </div>
+    </section>
+
     <section class="section bg-2">
       <div class="feature-grid">
         <div>
