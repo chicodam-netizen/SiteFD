@@ -12,14 +12,14 @@ export function renderPrivacy(container) {
 
       <div class="page-wrap">
         <div class="legal-doc">
-          <p class="legal-updated">Última atualização: 08/09/2026</p>
+          <p class="legal-updated">Última atualização: 03/10/2026</p>
 
           <h2>1. Quem somos</h2>
           <p>
             Esta política se aplica ao site da <strong>FD Consultoria em Tecnologia da Informação</strong>
-            (CNPJ 55.235.715/0001-15), com sede na Rua Aspásia, 431 s. 302 - Caiçara, Belo Horizonte – MG,
-            30720-570. Para qualquer assunto relacionado a esta política ou aos seus dados pessoais, fale
-            conosco pelo e-mail <a href="mailto:contato@fdconsultoria.tech">contato@fdconsultoria.tech</a>.
+            (CNPJ 55.235.715/0001-15). Para qualquer assunto relacionado a esta política ou aos seus dados
+            pessoais, fale com nosso Encarregado de Dados (DPO), <strong>Francisco Damásio</strong>, pelo
+            e-mail <a href="mailto:francisco@fdconsultoria.tech">francisco@fdconsultoria.tech</a>.
           </p>
 
           <h2>2. Quais dados coletamos e por quê</h2>
@@ -40,14 +40,14 @@ export function renderPrivacy(container) {
             <tbody>
               <tr><td>Vercel Inc.</td><td>Hospedagem do site e das funções de envio de e-mail</td><td>Dados de acesso técnico ao site</td></tr>
               <tr><td>Provedor de e-mail (SMTP) da FD Consultoria</td><td>Entrega das mensagens enviadas pelos formulários</td><td>Todos os dados do formulário preenchido</td></tr>
-              <tr><td>Anthropic (API de IA)</td><td>Geração automática de um rascunho de resposta ao contato, revisado por um humano da FD antes de qualquer envio</td><td>Nome, empresa, cidade/UF, serviço de interesse e o texto da sua mensagem</td></tr>
+              <tr><td>Anthropic (API de IA)</td><td>Geração automática da resposta enviada ao seu contato (não se trata de um rascunho para revisão)</td><td>Nome, empresa, cidade/UF, serviço de interesse e o texto da sua mensagem</td></tr>
             </tbody>
           </table>
           <p>
             O envio de dados à Anthropic (empresa sediada nos Estados Unidos) configura uma transferência
-            internacional de dados. Essa transferência ocorre apenas para viabilizar a geração do rascunho de
-            resposta interno da FD Consultoria e segue as salvaguardas contratuais oferecidas pelo fornecedor,
-            conforme previsto no Art. 33 da LGPD.
+            internacional de dados. Essa transferência ocorre apenas para viabilizar a geração automática da
+            resposta ao seu contato e segue as salvaguardas contratuais oferecidas pelo fornecedor, conforme
+            previsto no Art. 33 da LGPD.
           </p>
 
           <h2>4. Cookies e tecnologias de armazenamento</h2>
@@ -113,8 +113,8 @@ export function renderPrivacy(container) {
             <li>Revogação do consentimento a qualquer momento.</li>
           </ul>
           <p>
-            Para exercer qualquer um desses direitos, envie um e-mail para
-            <a href="mailto:contato@fdconsultoria.tech"> contato@fdconsultoria.tech</a>.
+            Para exercer qualquer um desses direitos, envie um e-mail ao nosso Encarregado de Dados (DPO),
+            Francisco Damásio: <a href="mailto:francisco@fdconsultoria.tech">francisco@fdconsultoria.tech</a>.
           </p>
 
           <h2>8. Segurança</h2>
@@ -132,9 +132,10 @@ export function renderPrivacy(container) {
 
           <h2>10. Fale conosco</h2>
           <p>
-            Dúvidas sobre esta política ou sobre o tratamento dos seus dados? Escreva para
-            <a href="mailto:contato@fdconsultoria.tech"> contato@fdconsultoria.tech</a> ou visite nossa
-            <a href="#/contato">página de contato</a>.
+            Dúvidas sobre esta política ou sobre o tratamento dos seus dados? Escreva ao nosso Encarregado
+            de Dados (DPO), Francisco Damásio, em
+            <a href="mailto:francisco@fdconsultoria.tech"> francisco@fdconsultoria.tech</a>
+            ou visite nossa <a href="#/contato">página de contato</a>.
           </p>
         </div>
       </div>

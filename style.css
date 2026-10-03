@@ -771,6 +771,10 @@ p {
   cursor: pointer;
 }
 
+.service-card p {
+  text-align: justify;
+}
+
 .service-card:hover {
   transform: translateY(-4px);
   border-color: var(--card-border-hover);
