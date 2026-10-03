@@ -24,7 +24,6 @@ export const services = [
 ];
 
 export const stats = [
-  { icon: "users", value: "200+", label: "Clientes Atendidos" },
   { icon: "award", value: "20+", label: "Anos de Experiência" },
   { icon: "trending-up", value: "98%", label: "Taxa de Satisfação" },
   { icon: "zap", value: "500+", label: "Projetos Entregues" },
