@@ -47,7 +47,7 @@ export function renderHome(container) {
           <h2 class="section-title">Excelência em cada projeto entregue</h2>
           <p style="color:var(--gray-400);line-height:1.7;margin-bottom:24px;">Com mais de 20 anos de mercado, conquistamos a confiança de diversas empresas em todo o Brasil, entregando soluções tecnológicas que realmente fazem diferença.</p>
           <ul class="why-list">
-            ${whyUs.map((item) => `<li>${icon("check-circle-2")}${item}</li>`).join("")}
+            ${whyUs.map((item) => `<li class="${item.highlight ? "highlight" : ""}">${icon(item.highlight ? "sparkles" : "check-circle-2")}${item.text}</li>`).join("")}
           </ul>
           <a href="#/contato" class="btn btn-green">Fale com um Especialista ${icon("arrow-right")}</a>
         </div>

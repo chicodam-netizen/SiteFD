@@ -916,6 +916,19 @@ p {
   font-size: 0.9rem;
 }
 
+.why-list li.highlight {
+  color: var(--white);
+  font-weight: 600;
+  background: rgba(var(--green-rgb), 0.12);
+  border: 1px solid rgba(var(--green-rgb), 0.35);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.why-list li.highlight svg {
+  color: var(--green);
+}
+
 .why-list svg {
   width: 17px;
   height: 17px;

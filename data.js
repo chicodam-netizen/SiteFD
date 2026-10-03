@@ -31,12 +31,13 @@ export const stats = [
 ];
 
 export const whyUs = [
-  "Equipe certificada",
-  "Atendimento personalizado e suporte dedicado",
-  "Metodologia ágil com foco em resultados",
-  "Parcerias com os maiores fornecedores de TI do mundo",
-  "Soluções escaláveis para empresas de todos os portes",
-  "Compromisso com prazos e orçamentos acordados",
+  { text: "Desenvolvimento com IA na Abordagem Spec Driven DevOps", highlight: true },
+  { text: "Equipe certificada" },
+  { text: "Atendimento personalizado e suporte dedicado" },
+  { text: "Metodologia ágil com foco em resultados" },
+  { text: "Parcerias com os maiores fornecedores de TI do mundo" },
+  { text: "Soluções escaláveis para empresas de todos os portes" },
+  { text: "Compromisso com prazos e orçamentos acordados" },
 ];
 
 // ---------- Gallery ----------
