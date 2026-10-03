@@ -121,6 +121,109 @@ function buildClientReplyMessage(body, draftText) {
   };
 }
 
+function buildGrcRequesterMessage(body) {
+  const { nome, empresa, email, diagnostico } = body;
+  const primeiroNome = (nome || "").split(" ")[0];
+  const d = diagnostico || {};
+  const integracao = d.integracao || {};
+  const riscos = Array.isArray(d.riscosIdentificados) ? d.riscosIdentificados : [];
+
+  const introText = [
+    `Olá, ${primeiroNome}, tudo bem?`,
+    `Obrigado por realizar o diagnóstico GRC (Governança, Riscos e Compliance) da FD Consultoria para a ${empresa}. Preparamos abaixo um resumo com os principais pontos da sua avaliação.`,
+  ].join("\n\n");
+
+  const convite = [
+    `Esses resultados merecem uma conversa mais aprofundada com nossos especialistas, para entendermos o cenário completo da ${empresa} e definirmos juntos os próximos passos para elevar a maturidade do seu programa de GRC.`,
+    `Vamos agendar uma conversa sem compromisso? É só responder este e-mail com o melhor dia e horário para você — ficaremos muito felizes em conversar e ajudar a ${empresa} a evoluir nessa jornada.`,
+  ].join("\n\n");
+
+  const integracaoRows = Object.entries(integracao)
+    .map(([par, nivel]) => `
+      <tr>
+        <td style="padding:6px 12px 6px 0;color:#9ca3af;font-size:13px;">${escapeHtml(par)}</td>
+        <td style="padding:6px 0;color:#e5e7eb;font-size:13px;font-weight:600;">${escapeHtml(nivel)}</td>
+      </tr>`)
+    .join("");
+
+  const riscosHtml = riscos.length
+    ? `<ul style="margin:0;padding-left:20px;color:#d1d5db;font-size:14px;line-height:1.7;">${riscos.map((r) => `<li style="margin-bottom:6px;">${escapeHtml(r)}</li>`).join("")}</ul>`
+    : `<p style="margin:0;color:#d1d5db;font-size:14px;line-height:1.7;">Nenhum risco crítico identificado. A organização demonstra maturidade no programa GRC.</p>`;
+
+  const riscosText = riscos.length
+    ? riscos.map((r) => `- ${r}`).join("\n")
+    : "Nenhum risco crítico identificado. A organização demonstra maturidade no programa GRC.";
+
+  const text = [
+    introText,
+    "",
+    `NÍVEL DE MATURIDADE GRC: ${d.pontuacaoGeral}% — ${d.nivel}`,
+    d.nivelDescricao || "",
+    "",
+    "ANÁLISE DE INTEGRAÇÃO ENTRE PILARES",
+    Object.entries(integracao).map(([par, nivel]) => `- ${par}: ${nivel}`).join("\n"),
+    "",
+    "PRINCIPAIS RISCOS IDENTIFICADOS",
+    riscosText,
+    "",
+    convite,
+    "",
+    "Atenciosamente,",
+    "Equipe FD Consultoria",
+  ].filter((line) => line !== "").join("\n");
+
+  const html = `
+    <div style="background:#060d1a;padding:32px 16px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;">
+        <tr>
+          <td style="background:#0c1a2e;padding:24px 32px;border-radius:12px 12px 0 0;text-align:center;">
+            <img src="${LOGO_URL}" alt="FD Consultoria" height="40" style="height:40px;width:auto;" />
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#122040;padding:32px;">
+            ${textToHtmlParagraphs(introText)}
+
+            <div style="background:#0e1f38;border-radius:8px;padding:18px 20px;margin:4px 0 20px;">
+              <p style="margin:0 0 4px;color:#9ca3af;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;">Nível de Maturidade GRC</p>
+              <p style="margin:0 0 6px;color:#00c896;font-size:22px;font-weight:800;">${escapeHtml(String(d.pontuacaoGeral ?? ""))}% — ${escapeHtml(d.nivel || "")}</p>
+              <p style="margin:0;color:#d1d5db;font-size:13px;line-height:1.6;">${escapeHtml(d.nivelDescricao || "")}</p>
+            </div>
+
+            <p style="margin:0 0 10px;color:#ffffff;font-size:15px;font-weight:700;">Análise de Integração entre Pilares</p>
+            <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">
+              ${integracaoRows}
+            </table>
+
+            <p style="margin:0 0 10px;color:#ffffff;font-size:15px;font-weight:700;">Principais Riscos Identificados</p>
+            <div style="margin:0 0 24px;">
+              ${riscosHtml}
+            </div>
+
+            <div style="background:rgba(0,200,150,0.1);border:1px solid rgba(0,200,150,0.35);border-radius:8px;padding:18px 20px;">
+              ${textToHtmlParagraphs(convite)}
+            </div>
+
+            <p style="margin:20px 0 0;color:#d1d5db;font-size:15px;line-height:1.7;">Atenciosamente,<br/>Equipe FD Consultoria</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#080f1c;padding:20px 32px;border-radius:0 0 12px 12px;text-align:center;">
+            <p style="margin:0;color:#6b7280;font-size:11px;">FD Consultoria · Rua Aspásia, 431 · Belo Horizonte - MG</p>
+          </td>
+        </tr>
+      </table>
+    </div>`;
+
+  return {
+    subject: `Seu Diagnóstico GRC — Vamos conversar?`,
+    text,
+    html,
+    to: email,
+    replyTo: MAIL_TO,
+  };
+}
+
 function buildMessage(body) {
   const { type } = body;
 
@@ -229,24 +332,6 @@ module.exports = async (req, res) => {
     return;
   }
 
-  // Defense in depth: the client already caps the logo at 2MB, but never trust
-  // that alone — an oversized base64 payload here would blow past Vercel's
-  // request body limit and the SMTP server's attachment limit alike.
-  let attachments;
-  if (body.type === "grc-lead" && body.logoBase64) {
-    if (body.logoBase64.length > 3_000_000) {
-      res.status(400).json({ ok: false, error: "logo_too_large" });
-      return;
-    }
-    attachments = [
-      {
-        filename: body.logoName || "logo.png",
-        content: Buffer.from(body.logoBase64, "base64"),
-        contentType: body.logoType || undefined,
-      },
-    ];
-  }
-
   try {
     const transporter = nodemailer.createTransport({
       host: SMTP_HOST,
@@ -261,7 +346,6 @@ module.exports = async (req, res) => {
       replyTo: msg.replyTo,
       subject: msg.subject,
       text: msg.text,
-      attachments,
     });
 
     // Best-effort: an AI-generated reply sent straight to the lead, bcc'd to the
@@ -291,6 +375,29 @@ module.exports = async (req, res) => {
         }
       } catch (err) {
         console.error("ai reply email error:", err);
+      }
+    }
+
+    // Best-effort: a summary of the GRC diagnostic (maturity level, pillar
+    // integration, top risks) sent straight to the person who requested it,
+    // inviting them to a conversation. A failure here must never block the
+    // internal notification above — the team still has that to follow up.
+    if (body.type === "grc-lead") {
+      try {
+        const requesterMsg = buildGrcRequesterMessage(body);
+        const info = await transporter.sendMail({
+          from: `"FD Consultoria" <${SMTP_USER}>`,
+          to: requesterMsg.to,
+          replyTo: requesterMsg.replyTo,
+          subject: requesterMsg.subject,
+          text: requesterMsg.text,
+          html: requesterMsg.html,
+        });
+        if (info.rejected && info.rejected.length > 0) {
+          console.error("grc requester email rejected for:", info.rejected, info.response);
+        }
+      } catch (err) {
+        console.error("grc requester email error:", err);
       }
     }
 

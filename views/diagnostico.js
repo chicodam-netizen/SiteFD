@@ -1,8 +1,6 @@
 import { icon } from "../icons.js";
 import { grcPillars, grcQuestionIds, gerarDiagnosticoGrc } from "../grc-data.js";
 
-const MAX_LOGO_BYTES = 2 * 1024 * 1024;
-
 function defaultRespostas() {
   return Object.fromEntries(grcQuestionIds.map((id) => [id, "Não"]));
 }
@@ -20,8 +18,6 @@ function resetState() {
     leadLoading: false,
     leadSent: false,
     leadSendError: false,
-    logoFile: null,
-    logoError: "",
   };
 }
 
@@ -218,7 +214,7 @@ export function renderDiagnostico(container) {
         <div class="success-box">
           <div class="success-icon">${icon("check-circle-2")}</div>
           <h3>Solicitação enviada!</h3>
-          <p>Recebemos seus dados. Nossa equipe vai entrar em contato em breve com mais informações sobre a implementação da GRC.</p>
+          <p>Recebemos seus dados. Enviamos um resumo do seu diagnóstico para o e-mail informado, e nossa equipe vai entrar em contato em breve para conversar sobre os próximos passos.</p>
         </div>
       `;
     }
@@ -227,18 +223,12 @@ export function renderDiagnostico(container) {
     return `
       <div class="diag-cta-box">
         <h3>Quero Saber Mais</h3>
-        <p>Preencha seus dados — vamos enviar maiores informações sobre a implementação da GRC na sua empresa.</p>
+        <p>Preencha seus dados — vamos enviar um resumo do diagnóstico para o seu e-mail e combinar uma conversa com nossos especialistas.</p>
         <form id="diag-lead-form">
           <div class="form-field ${e.empresa ? "error" : ""}">
             <label>${icon("building-2")} Nome da Empresa <span class="required">*</span></label>
             <input type="text" name="empresa" placeholder="Nome da sua empresa" value="${f.empresa}" />
             ${e.empresa ? `<p class="error-text">${e.empresa}</p>` : ""}
-          </div>
-          <div class="form-field ${e.logo ? "error" : ""}">
-            <label>${icon("image")} Logo da Empresa <span class="required">*</span></label>
-            <input type="file" name="logo" accept="image/png,image/jpeg,image/svg+xml,image/webp" />
-            ${state.logoFile ? `<p class="form-hint">Selecionado: ${state.logoFile.name}</p>` : ""}
-            ${e.logo ? `<p class="error-text">${e.logo}</p>` : ""}
           </div>
           <div class="form-grid-2">
             <div class="form-field ${e.nome ? "error" : ""}">
@@ -321,20 +311,6 @@ export function renderDiagnostico(container) {
 
     const leadForm = container.querySelector("#diag-lead-form");
     if (leadForm) {
-      const fileInput = leadForm.querySelector('input[name="logo"]');
-      if (fileInput) {
-        fileInput.addEventListener("change", () => {
-          const file = fileInput.files[0];
-          state.logoError = "";
-          if (file && file.size > MAX_LOGO_BYTES) {
-            state.logoFile = null;
-            state.logoError = "Arquivo muito grande (máx. 2MB).";
-          } else {
-            state.logoFile = file || null;
-          }
-        });
-      }
-
       leadForm.addEventListener("submit", (e) => {
         e.preventDefault();
         const data = new FormData(leadForm);
@@ -350,7 +326,6 @@ export function renderDiagnostico(container) {
         if (!state.leadForm.nome.trim()) errs.nome = "Obrigatório";
         if (!state.leadForm.email.trim() || !/\S+@\S+\.\S+/.test(state.leadForm.email)) errs.email = "E-mail inválido";
         if (!state.leadForm.cargo.trim()) errs.cargo = "Obrigatório";
-        if (!state.logoFile) errs.logo = state.logoError || "Selecione a logo da empresa";
 
         state.leadErrors = errs;
         state.leadSendError = false;
@@ -364,43 +339,35 @@ export function renderDiagnostico(container) {
         draw();
 
         const honeypot = data.get("website") || "";
-        const reader = new FileReader();
-        reader.onload = () => {
-          const base64 = String(reader.result).split(",")[1] || "";
-          fetch("/api/send-email", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              type: "grc-lead",
-              ...state.leadForm,
-              diagnostico: {
-                pontuacaoGeral: state.diagnostico.pontuacaoGeral.toFixed(1),
-                nivel: state.diagnostico.maturidade.titulo,
-              },
-              logoBase64: base64,
-              logoName: state.logoFile.name,
-              logoType: state.logoFile.type,
-              website: honeypot,
-            }),
+        const d = state.diagnostico;
+
+        fetch("/api/send-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "grc-lead",
+            ...state.leadForm,
+            diagnostico: {
+              pontuacaoGeral: d.pontuacaoGeral.toFixed(1),
+              nivel: d.maturidade.titulo,
+              nivelDescricao: d.maturidade.descricao,
+              integracao: d.integracao,
+              riscosIdentificados: d.riscosIdentificados,
+            },
+            website: honeypot,
+          }),
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("send_failed");
+            state.leadLoading = false;
+            state.leadSent = true;
+            draw();
           })
-            .then((res) => {
-              if (!res.ok) throw new Error("send_failed");
-              state.leadLoading = false;
-              state.leadSent = true;
-              draw();
-            })
-            .catch(() => {
-              state.leadLoading = false;
-              state.leadSendError = true;
-              draw();
-            });
-        };
-        reader.onerror = () => {
-          state.leadLoading = false;
-          state.leadSendError = true;
-          draw();
-        };
-        reader.readAsDataURL(state.logoFile);
+          .catch(() => {
+            state.leadLoading = false;
+            state.leadSendError = true;
+            draw();
+          });
       });
     }
   };
