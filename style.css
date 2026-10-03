@@ -239,7 +239,7 @@ p {
 }
 
 .btn-green {
-  background: var(--green);
+  background: linear-gradient(135deg, #00e0a8 0%, var(--green) 100%);
   color: var(--ink);
 }
 
@@ -308,7 +308,9 @@ p {
 /* ---------- Header ---------- */
 
 .site-header {
-  background: var(--header-bg);
+  background: linear-gradient(120deg, rgba(10, 24, 42, 0.92) 0%, rgba(13, 22, 40, 0.95) 55%, rgba(58, 34, 74, 0.88) 100%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--header-border);
   position: sticky;
   top: 0;
@@ -366,8 +368,8 @@ p {
   border-radius: 6px;
   font-size: 0.9rem;
   font-weight: 600;
-  background: var(--blue);
-  color: var(--ink);
+  background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 100%);
+  color: var(--white);
   transition: opacity 0.2s ease;
 }
 
@@ -604,7 +606,7 @@ p {
 }
 
 .hero-overlay.home {
-  background: linear-gradient(135deg, rgba(6, 13, 26, 0.97) 0%, rgba(12, 26, 46, 0.85) 50%, rgba(0, 200, 150, 0.25) 100%);
+  background: linear-gradient(135deg, rgba(6, 13, 26, 0.97) 0%, rgba(12, 26, 46, 0.85) 45%, rgba(0, 200, 150, 0.22) 78%, rgba(139, 92, 246, 0.2) 100%);
 }
 
 .hero-overlay.marketing {
@@ -671,7 +673,7 @@ p {
   text-align: center;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, var(--section-hero-b) 0%, var(--card-bg) 100%);
+  background: linear-gradient(135deg, var(--section-hero-b) 0%, var(--card-bg) 62%, rgba(139, 92, 246, 0.16) 100%);
   border-bottom: 3px solid var(--green);
 }
 
@@ -2517,6 +2519,105 @@ p {
 .legal-doc .status-pill.off {
   background: rgba(74, 158, 255, 0.12);
   color: var(--blue);
+}
+
+/* ---------- Quem Somos / CEO ---------- */
+
+.about-intro {
+  max-width: 760px;
+  margin: 0 auto 56px;
+  text-align: center;
+  color: var(--gray-300);
+  line-height: 1.75;
+}
+
+.ceo-section {
+  max-width: 980px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 36px;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(0, 200, 150, 0.08) 0%, rgba(74, 158, 255, 0.06) 45%, rgba(139, 92, 246, 0.1) 100%);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+}
+
+@media (min-width: 768px) {
+  .ceo-section {
+    grid-template-columns: 260px 1fr;
+  }
+}
+
+.ceo-photo-frame {
+  justify-self: center;
+  padding: 4px;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #00e0a8 0%, #4a9eff 50%, #8b5cf6 100%);
+  box-shadow: 0 0 36px rgba(139, 92, 246, 0.25);
+}
+
+.ceo-photo-frame img {
+  display: block;
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.ceo-badge {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--green) 0%, var(--blue) 100%);
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.ceo-info h3 {
+  color: var(--white);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.ceo-info h3 a {
+  color: var(--white);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.ceo-info h3 a:hover {
+  color: var(--green);
+  border-color: var(--green);
+}
+
+.ceo-info h3 svg {
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+  margin-left: 2px;
+  color: var(--blue);
+}
+
+.ceo-info .ceo-role {
+  color: var(--blue);
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.ceo-info p {
+  color: var(--gray-300);
+  line-height: 1.75;
+  text-align: justify;
 }
 
 /* ---------- Misc utility ---------- */
