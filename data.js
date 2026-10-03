@@ -19,7 +19,7 @@ export const services = [
   { icon: "database", title: "Consultoria em Governança de Dados", desc: "Soluções personalizadas para apoio ao programa de adequação à LGPD." },
   { icon: "code-2", title: "Desenvolvimento de Software", desc: "Sistemas personalizados, APIs e automações construídas com apoio de IA, com revisão e homologação de todos os desenvolvimentos com base em nosso amplo conhecimento em gestão de dados e processos e seguindo estritamente as melhores práticas." },
   { icon: "bar-chart-3", title: "Business Intelligence", desc: "Transformação de dados em insights estratégicos com dashboards, relatórios e análise de dados avançada." },
-  { icon: "radar", title: "Monitoria de Desenvolvimento com IA", desc: "Acelere seus projetos com o apoio de um especialista. Acompanho o desenvolvimento da sua solução em tempo real, aplicando as melhores práticas, utilizando IA para otimizar código, revisar arquitetura e resolver bugs complexos. Mais agilidade, menos erros e entregas mais rápidas." },
+  { icon: "radar", title: "Mentoria de Desenvolvimento com IA", desc: "Acelere seus projetos com o apoio de um especialista. Mentoria em IA para o desenvolvimento da sua solução: orientação especializada, melhores práticas e uso inteligente dos recursos de IA. Agilidade, controle e segurança em cada entrega." },
 ];
 
 export const stats = [
