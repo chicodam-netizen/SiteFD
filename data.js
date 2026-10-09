@@ -133,10 +133,10 @@ export const arthurPortfolio = [
 
 export const contactServiceOptions = [
   "Consultoria em TI",
-  "Segurança da Informação",
+  "Governança de dados e processos",
   "Desenvolvimento de Software",
   "Business Intelligence",
-  "Suporte Técnico",
+  "Mentoria no desenvolvimento com IA",
   "Outro",
 ];
 
