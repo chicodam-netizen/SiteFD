@@ -47,7 +47,7 @@ export function renderHome(container) {
           <div class="diag-promo-text">
             <span class="eyebrow">NOVO · GRATUITO</span>
             <h2>Faça o Diagnóstico Gratuito da sua Empresa</h2>
-            <p>Responda a um questionário rápido baseado nas normas ISO e descubra, na hora, o nível de maturidade em GRC (Governança, Riscos e Compliance) da sua empresa.</p>
+            <p>Responda a um questionário rápido com base nas principais normas e referências, tais como ISO 27001, ISO 9001, LGPD, DAMA-DMBOK, dentre outras, e receba um breve diagnóstico sobre o nível de maturidade da sua empresa.</p>
           </div>
           <span class="btn btn-green diag-promo-btn">Iniciar Diagnóstico ${icon("arrow-right")}</span>
         </a>

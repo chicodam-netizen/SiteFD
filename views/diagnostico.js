@@ -67,7 +67,7 @@ export function renderDiagnostico(container) {
           <div class="page-header-inner">
             <span class="eyebrow">DIAGNÓSTICO GRATUITO</span>
             <h1>Faça o Diagnóstico Gratuito da sua Empresa</h1>
-            <p>Responda a um questionário rápido e descubra, na hora, o nível de maturidade da sua empresa</p>
+            <p>Responda a um questionário rápido com base nas principais normas e referências, tais como ISO 27001, ISO 9001, LGPD, DAMA-DMBOK, dentre outras, e receba um breve diagnóstico sobre o nível de maturidade da sua empresa.</p>
           </div>
         </div>
         <div class="page-wrap">
