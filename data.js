@@ -129,6 +129,17 @@ export const arthurPortfolio = [
   { title: "Identidade Visual Startup", description: "Criação de marca completa para startup de tecnologia", image: "https://images.unsplash.com/photo-1634942537034-2531766767d1?w=800", tags: ["Branding", "Design Gráfico"] },
 ];
 
+// ---------- Partners ----------
+
+export const partners = [
+  {
+    name: "QRZ Consultorias Industriais",
+    logo: "assets/logo-qrz.jpg",
+    url: "https://www.qrzconsultorias.com.br/in%C3%ADcio",
+    description: "Consultoria industrial especializada, parceira estratégica da FD Consultoria.",
+  },
+];
+
 // ---------- Contact ----------
 
 export const contactServiceOptions = [

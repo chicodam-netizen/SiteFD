@@ -834,6 +834,64 @@ p {
   line-height: 1.6;
 }
 
+.partner-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  padding: 40px 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.partner-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--card-border-hover);
+}
+
+.partner-card img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(var(--green-rgb), 0.35), 0 0 22px rgba(var(--green-rgb), 0.28);
+  transition: box-shadow 0.25s ease;
+}
+
+.partner-card:hover img {
+  box-shadow: 0 0 0 1px rgba(var(--green-rgb), 0.55), 0 0 32px rgba(var(--green-rgb), 0.42);
+}
+
+.partner-card h3 {
+  color: var(--white);
+  font-weight: 600;
+}
+
+.partner-card p {
+  color: var(--gray-400);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.partner-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--green);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.partner-link svg {
+  width: 16px;
+  height: 16px;
+}
+
 .service-card.selected {
   background: rgba(var(--purple-rgb), 0.2);
   border: 2px solid var(--purple);
