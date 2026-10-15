@@ -1,6 +1,7 @@
 import { icon } from "../icons.js";
 import { grcPillars, grcQuestionIds, gerarDiagnosticoGrc } from "../grc-data.js";
 import { lgpdPillars, lgpdQuestionIds, gerarDiagnosticoLgpd } from "../lgpd-data.js";
+import { iso9001Pillars, iso9001QuestionIds, gerarDiagnosticoIso9001 } from "../iso9001-data.js";
 
 const DIAGNOSTICOS = {
   grc: {
@@ -32,6 +33,21 @@ const DIAGNOSTICOS = {
     gerarDiagnostico: gerarDiagnosticoLgpd,
     diagTipo: "LGPD",
     diagNomeCompleto: "Lei Geral de Proteção de Dados",
+  },
+  iso9001: {
+    key: "iso9001",
+    hubIcon: "award",
+    hubTitle: "ISO 9001 — Sistema de Gestão da Qualidade",
+    hubDesc: "15 perguntas baseadas nos capítulos 4 a 10 da norma ISO 9001:2015. Descubra o nível de maturidade do seu Sistema de Gestão da Qualidade em poucos minutos.",
+    introBadge: "ISO 9001",
+    introText: [
+      `A <strong>ISO 9001</strong> é a norma internacional de Sistema de Gestão da Qualidade, estruturada em 10 capítulos (Anexo SL) e baseada em sete princípios: foco no cliente, liderança, engajamento das pessoas, abordagem por processos, melhoria, tomada de decisão baseada em evidências e gestão de relacionamentos. Este diagnóstico avalia quatro etapas do ciclo PDCA: <strong>Contexto e Liderança</strong>, <strong>Planejamento e Apoio</strong>, <strong>Operação</strong> e <strong>Avaliação e Melhoria</strong>.`,
+    ],
+    pillars: iso9001Pillars,
+    questionIds: iso9001QuestionIds,
+    gerarDiagnostico: gerarDiagnosticoIso9001,
+    diagTipo: "ISO 9001",
+    diagNomeCompleto: "Sistema de Gestão da Qualidade ISO 9001:2015",
   },
 };
 
