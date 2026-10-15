@@ -12,7 +12,15 @@ Sua tarefa é ler a mensagem de um lead recebida pelo formulário de contato do 
 Conhecimento de referência (use apenas quando genuinamente relevante à dúvida do lead, sem forçar jargão):
 - Governança de Dados: os principais frameworks de mercado são o DAMA-DMBOK (padrão da DAMA International, organizado na "Roda do DAMA" com Governança de Dados no centro e 11 áreas de conhecimento ao redor, como Qualidade, Arquitetura, Metadados e Segurança de Dados), a norma ISO/IEC 38505 (avaliação, direção e monitoramento do uso de dados pela alta administração), o IBM Data Governance Council Maturity Model (11 componentes e 4 níveis de maturidade) e o DGI Framework (10 componentes universais, foco em flexibilidade).
 - LGPD (Lei 13.709/2018): baseia-se em 10 princípios (Art. 6º) — finalidade, adequação, necessidade, livre acesso, qualidade dos dados, transparência, segurança, prevenção, não discriminação e responsabilização. Papéis-chave: Controlador, Operador, Encarregado (DPO), ANPD e Titular. Categorias de dados: pessoais, sensíveis (origem racial/étnica, saúde, biometria etc.) e anonimizados (fora do escopo da lei).
-- ISO 9001 (Sistema de Gestão da Qualidade): norma ISO 9001:2015, estruturada em 10 capítulos (Anexo SL) e baseada em 7 princípios — foco no cliente, liderança, engajamento das pessoas, abordagem por processos, melhoria, tomada de decisão baseada em evidências e gestão de relacionamentos. Aplica o ciclo PDCA e a mentalidade de risco integrada a todo o sistema, cobrindo contexto organizacional, política da qualidade, gestão de riscos e oportunidades, competência, controle de fornecedores externos e melhoria contínua.
+- ISO 9001 (Sistema de Gestão da Qualidade): norma ISO 9001:2015 (substituída pela ISO 9001:2026, publicada em 16/09/2026, com transição até 30/09/2029), estruturada em 10 capítulos (Anexo SL) e baseada em 7 princípios — foco no cliente, liderança, engajamento das pessoas, abordagem por processos, melhoria, tomada de decisão baseada em evidências e gestão de relacionamentos. Aplica o ciclo PDCA e a mentalidade de risco integrada a todo o sistema, cobrindo contexto organizacional, política da qualidade, gestão de riscos e oportunidades, competência, controle de fornecedores externos e melhoria contínua.
+
+Referências oficiais (cite SOMENTE estas, literalmente como estão escritas aqui, nunca invente outra norma, lei, URL ou fonte — se o assunto da mensagem não for GRC, LGPD ou ISO 9001, não inclua nenhuma referência):
+- Sobre GRC (Governança, Riscos e Compliance): "ISO 9001:2015 — Sistemas de gestão da qualidade", "ISO 31000:2018 — Gestão de riscos — Diretrizes", "ISO 37301:2021 — Sistemas de gestão de compliance".
+- Sobre LGPD: "Lei nº 13.709/2018 (LGPD) — texto oficial no Planalto.gov.br", "ANPD — Autoridade Nacional de Proteção de Dados (gov.br/anpd)".
+- Sobre ISO 9001: "ISO 9001:2015 — Sistemas de gestão da qualidade — Requisitos (ISO.org)", "ABNT NBR ISO 9001:2015 — versão brasileira", "ISO 9001:2026 — nova edição publicada em 16/09/2026 (ISO/TC 176/SC 2)".
+- Sobre Governança de Dados (DAMA-DMBOK e correlatos): não cite link/URL específico — mencione apenas o nome do framework (ex.: "DAMA-DMBOK (DAMA International)", "ISO/IEC 38505"), sem inventar números de versão ou datas que não estejam no conhecimento de referência acima.
+
+Se a mensagem do lead tratar de GRC, LGPD ou ISO 9001 (mesmo que de forma indireta), termine o e-mail com uma linha "Referências:" seguida das referências aplicáveis da lista acima, separadas por vírgula. Nunca cite uma norma, artigo de lei, data ou fonte que não esteja explicitamente listada aqui — na dúvida, omita a referência em vez de arriscar um dado incorreto.
 
 Diretrizes:
 - Tom cordial, profissional e consultivo, em português do Brasil.
@@ -126,6 +134,26 @@ function buildClientReplyMessage(body, draftText) {
   };
 }
 
+// Referências oficiais por diagnóstico — lista fechada e verificada manualmente.
+// Nunca gerada por IA: evita citar uma norma, lei ou data incorreta num e-mail
+// enviado automaticamente ao lead.
+const REFERENCIAS_POR_DIAGNOSTICO = {
+  GRC: [
+    "ISO 9001:2015 — Sistemas de gestão da qualidade",
+    "ISO 31000:2018 — Gestão de riscos — Diretrizes",
+    "ISO 37301:2021 — Sistemas de gestão de compliance",
+  ],
+  LGPD: [
+    "Lei nº 13.709/2018 (LGPD) — texto oficial no Planalto.gov.br",
+    "ANPD — Autoridade Nacional de Proteção de Dados (gov.br/anpd)",
+  ],
+  "ISO 9001": [
+    "ISO 9001:2015 — Sistemas de gestão da qualidade — Requisitos (ISO.org)",
+    "ABNT NBR ISO 9001:2015 — versão brasileira",
+    "ISO 9001:2026 — nova edição publicada em 16/09/2026 (ISO/TC 176/SC 2)",
+  ],
+};
+
 function buildDiagRequesterMessage(body) {
   const { nome, empresa, email, diagnostico, diagTipo, diagNomeCompleto } = body;
   const primeiroNome = (nome || "").split(" ")[0];
@@ -134,6 +162,7 @@ function buildDiagRequesterMessage(body) {
   const d = diagnostico || {};
   const integracao = d.integracao || {};
   const riscos = Array.isArray(d.riscosIdentificados) ? d.riscosIdentificados : [];
+  const referencias = REFERENCIAS_POR_DIAGNOSTICO[tipo] || [];
 
   const introText = [
     `Olá, ${primeiroNome}, tudo bem?`,
@@ -161,6 +190,11 @@ function buildDiagRequesterMessage(body) {
     ? riscos.map((r) => `- ${r}`).join("\n")
     : `Nenhum risco crítico identificado. A organização demonstra maturidade no programa de ${tipo}.`;
 
+  const referenciasHtml = referencias.length
+    ? `<ul style="margin:0;padding-left:20px;color:#9ca3af;font-size:12px;line-height:1.7;">${referencias.map((r) => `<li style="margin-bottom:4px;">${escapeHtml(r)}</li>`).join("")}</ul>`
+    : "";
+  const referenciasText = referencias.length ? referencias.map((r) => `- ${r}`).join("\n") : "";
+
   const text = [
     introText,
     "",
@@ -174,6 +208,9 @@ function buildDiagRequesterMessage(body) {
     riscosText,
     "",
     convite,
+    "",
+    referencias.length ? "REFERÊNCIAS" : "",
+    referenciasText,
     "",
     "Atenciosamente,",
     "Equipe FD Consultoria",
@@ -210,6 +247,12 @@ function buildDiagRequesterMessage(body) {
             <div style="background:rgba(0,200,150,0.1);border:1px solid rgba(0,200,150,0.35);border-radius:8px;padding:18px 20px;">
               ${textToHtmlParagraphs(convite)}
             </div>
+
+            ${referencias.length ? `
+            <div style="margin:20px 0 0;">
+              <p style="margin:0 0 6px;color:#9ca3af;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;">Referências</p>
+              ${referenciasHtml}
+            </div>` : ""}
 
             <p style="margin:20px 0 0;color:#d1d5db;font-size:15px;line-height:1.7;">Atenciosamente,<br/>Equipe FD Consultoria</p>
           </td>
