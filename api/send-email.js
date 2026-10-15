@@ -395,6 +395,7 @@ module.exports = async (req, res) => {
         const info = await transporter.sendMail({
           from: `"FD Consultoria" <${SMTP_USER}>`,
           to: requesterMsg.to,
+          bcc: MAIL_TO,
           replyTo: requesterMsg.replyTo,
           subject: requesterMsg.subject,
           text: requesterMsg.text,
