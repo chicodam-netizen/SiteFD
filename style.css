@@ -3208,6 +3208,103 @@ p {
   margin: 0 auto;
 }
 
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.slot-btn {
+  padding: 10px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--card-border);
+  background: var(--input-bg);
+  color: var(--gray-300);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slot-btn:hover:not(.taken) {
+  border-color: var(--green);
+  color: var(--white);
+}
+
+.slot-btn.selected {
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--ink);
+}
+
+.slot-btn.taken {
+  opacity: 0.35;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.btn-sm {
+  padding: 6px 14px;
+  font-size: 0.8rem;
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.admin-table th {
+  text-align: left;
+  padding: 12px 16px;
+  background: var(--card-bg);
+  color: var(--gray-400);
+  font-weight: 600;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.admin-table td {
+  padding: 12px 16px;
+  color: var(--gray-300);
+  border-bottom: 1px solid var(--card-border);
+  vertical-align: middle;
+}
+
+.admin-table tr.is-cancelled td {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
+.admin-sub {
+  color: var(--gray-400);
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+
+.admin-responsavel-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.responsavel-input {
+  background: var(--input-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  color: var(--white);
+  font-size: 0.82rem;
+  width: 150px;
+}
+
 /* ---------- Misc utility ---------- */
 
 .text-center {

@@ -7,6 +7,7 @@ import { renderAbout } from "./views/about.js";
 import { renderDiagnostico } from "./views/diagnostico.js";
 import { renderGallery } from "./views/gallery.js";
 import { renderPartners } from "./views/partners.js";
+import { renderAgendaAdmin } from "./views/agenda-admin.js";
 import { renderKnowledge } from "./views/knowledge.js";
 import { renderMarketing } from "./views/marketing.js";
 import { renderArthur } from "./views/arthur.js";
@@ -20,6 +21,7 @@ const routes = {
   "/diagnostico": { render: renderDiagnostico, label: "Diagnóstico Gratuito" },
   "/galeria": { render: renderGallery, label: "Galeria" },
   "/parcerias": { render: renderPartners, label: "Parcerias Estratégicas" },
+  "/agenda-admin": { render: renderAgendaAdmin, label: "Agenda (Admin)" },
   "/base-de-conhecimento": { render: renderKnowledge, label: "Base de Conhecimento" },
   "/marketing": { render: renderMarketing, label: "Marketing" },
   "/arthur": { render: renderArthur, label: "Arthur" },

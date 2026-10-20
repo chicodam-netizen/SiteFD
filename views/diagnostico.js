@@ -55,6 +55,12 @@ function defaultRespostas(questionIds) {
   return Object.fromEntries(questionIds.map((id) => [id, "Não"]));
 }
 
+function minDateStr() {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().slice(0, 10);
+}
+
 let state = {};
 
 function resetState() {
@@ -69,6 +75,15 @@ function resetState() {
     leadLoading: false,
     leadSent: false,
     leadSendError: false,
+    showScheduleForm: false,
+    scheduleForm: { empresa: "", nome: "", email: "", telefone: "", data: "", horario: "" },
+    scheduleErrors: {},
+    scheduleLoading: false,
+    scheduleSent: false,
+    scheduleSendError: false,
+    slotsLoading: false,
+    availableSlots: [],
+    slotsError: false,
   };
 }
 
@@ -240,13 +255,16 @@ export function renderDiagnostico(container) {
           <p class="diag-integration-note">Nenhum risco crítico identificado. A organização demonstra maturidade no programa de ${cfg.diagTipo}.</p>
         `}
 
-        ${!state.showLeadForm ? `
+        ${!state.showLeadForm && !state.showScheduleForm ? `
           <div class="diag-cta-box">
             <h3>Quer entender como implementar a ${cfg.diagTipo} na sua empresa?</h3>
             <p>Fale com nossos especialistas e receba orientação sobre os próximos passos.</p>
-            <button type="button" class="btn btn-green" id="diag-want-more">${icon("send")} Quero Saber Mais</button>
+            <div class="diag-intro-actions">
+              <button type="button" class="btn btn-green" id="diag-want-more">${icon("send")} Quero Saber Mais</button>
+              <button type="button" class="btn btn-outline-gray" id="diag-want-schedule">${icon("calendar")} Agendar Reunião</button>
+            </div>
           </div>
-        ` : leadFormMarkup()}
+        ` : state.showLeadForm ? leadFormMarkup() : scheduleFormMarkup()}
       </div>
     `;
   };
@@ -294,6 +312,87 @@ export function renderDiagnostico(container) {
           ${state.leadSendError ? `<p class="error-text" style="margin-bottom:12px;">Não conseguimos enviar agora. Tente novamente em instantes.</p>` : ""}
           <button type="submit" class="btn btn-green btn-block" ${state.leadLoading ? "disabled" : ""}>
             ${state.leadLoading ? `<span class="spinner"></span> Enviando...` : `${icon("send")} Enviar`}
+          </button>
+        </form>
+      </div>
+    `;
+  };
+
+  const slotsMarkup = () => {
+    if (!state.scheduleForm.data) {
+      return `<p class="diag-question-help">Selecione uma data acima para ver os horários disponíveis.</p>`;
+    }
+    if (state.slotsLoading) {
+      return `<p class="diag-question-help"><span class="spinner"></span> Carregando horários...</p>`;
+    }
+    if (state.slotsError) {
+      return `<p class="error-text">Não foi possível carregar os horários. Tente outra data.</p>`;
+    }
+    if (state.availableSlots.length === 0) {
+      return `<p class="diag-question-help">Não há horários comerciais nessa data (atendemos de segunda a sexta). Escolha outro dia.</p>`;
+    }
+    return `
+      <div class="slot-grid">
+        ${state.availableSlots.map((s) => `
+          <button type="button" class="slot-btn ${!s.disponivel ? "taken" : ""} ${state.scheduleForm.horario === s.inicio ? "selected" : ""}" data-time="${s.inicio}" ${!s.disponivel ? "disabled" : ""}>${s.inicio}</button>
+        `).join("")}
+      </div>
+    `;
+  };
+
+  const scheduleFormMarkup = () => {
+    if (state.scheduleSent) {
+      return `
+        <div class="success-box">
+          <div class="success-icon">${icon("calendar-check")}</div>
+          <h3>Reunião agendada!</h3>
+          <p>Confirmamos seu agendamento. Você vai receber um e-mail de confirmação com os detalhes, e nossa equipe entrará em contato em breve.</p>
+        </div>
+      `;
+    }
+    const f = state.scheduleForm;
+    const e = state.scheduleErrors;
+    return `
+      <div class="diag-cta-box">
+        <h3>Agendar Reunião</h3>
+        <p>Escolha o melhor dia e horário — vamos confirmar a reunião com um de nossos especialistas.</p>
+        <form id="diag-schedule-form">
+          <div class="form-field ${e.empresa ? "error" : ""}">
+            <label>${icon("building-2")} Nome da Empresa <span class="required">*</span></label>
+            <input type="text" name="empresa" placeholder="Nome da sua empresa" value="${f.empresa}" />
+            ${e.empresa ? `<p class="error-text">${e.empresa}</p>` : ""}
+          </div>
+          <div class="form-grid-2">
+            <div class="form-field ${e.nome ? "error" : ""}">
+              <label>${icon("user")} Nome <span class="required">*</span></label>
+              <input type="text" name="nome" placeholder="Seu nome" value="${f.nome}" />
+              ${e.nome ? `<p class="error-text">${e.nome}</p>` : ""}
+            </div>
+            <div class="form-field ${e.email ? "error" : ""}">
+              <label>${icon("mail")} E-mail <span class="required">*</span></label>
+              <input type="email" name="email" placeholder="seu@email.com" value="${f.email}" />
+              ${e.email ? `<p class="error-text">${e.email}</p>` : ""}
+            </div>
+          </div>
+          <div class="form-field ${e.telefone ? "error" : ""}">
+            <label>${icon("phone")} Telefone <span class="required">*</span></label>
+            <input type="tel" name="telefone" placeholder="(31) 9 9999-9999" value="${f.telefone}" />
+            ${e.telefone ? `<p class="error-text">${e.telefone}</p>` : ""}
+          </div>
+          <div class="form-field ${e.data ? "error" : ""}">
+            <label>${icon("calendar")} Data <span class="required">*</span></label>
+            <input type="date" name="data" min="${minDateStr()}" value="${f.data}" />
+            ${e.data ? `<p class="error-text">${e.data}</p>` : ""}
+          </div>
+          <div class="form-field ${e.horario ? "error" : ""}">
+            <label>${icon("clock")} Horário (seg-sex, 9h-18h) <span class="required">*</span></label>
+            ${slotsMarkup()}
+            ${e.horario ? `<p class="error-text">${e.horario}</p>` : ""}
+          </div>
+          <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" aria-hidden="true" />
+          ${state.scheduleSendError ? `<p class="error-text" style="margin-bottom:12px;">Não conseguimos agendar agora. Tente novamente em instantes.</p>` : ""}
+          <button type="submit" class="btn btn-green btn-block" ${state.scheduleLoading ? "disabled" : ""}>
+            ${state.scheduleLoading ? `<span class="spinner"></span> Agendando...` : `${icon("calendar-check")} Confirmar Agendamento`}
           </button>
         </form>
       </div>
@@ -352,6 +451,147 @@ export function renderDiagnostico(container) {
       wantMoreBtn.addEventListener("click", () => {
         state.showLeadForm = true;
         draw();
+      });
+    }
+
+    const wantScheduleBtn = container.querySelector("#diag-want-schedule");
+    if (wantScheduleBtn) {
+      wantScheduleBtn.addEventListener("click", () => {
+        state.showScheduleForm = true;
+        draw();
+      });
+    }
+
+    // A seleção de data dispara um draw() (para mostrar a grade de horários),
+    // que re-renderiza o form inteiro a partir de state.scheduleForm — por
+    // isso os outros campos precisam atualizar o state a cada digitação, não
+    // só no submit, senão o que já foi digitado some ao escolher a data.
+    ["empresa", "nome", "email", "telefone"].forEach((field) => {
+      const input = container.querySelector(`#diag-schedule-form input[name="${field}"]`);
+      if (input) {
+        input.addEventListener("input", () => {
+          state.scheduleForm[field] = input.value;
+        });
+      }
+    });
+
+    const scheduleDateInput = container.querySelector('#diag-schedule-form input[name="data"]');
+    if (scheduleDateInput) {
+      scheduleDateInput.addEventListener("change", () => {
+        const data = scheduleDateInput.value;
+        state.scheduleForm.data = data;
+        state.scheduleForm.horario = "";
+        state.slotsError = false;
+        state.availableSlots = [];
+
+        if (!data) {
+          draw();
+          return;
+        }
+
+        state.slotsLoading = true;
+        draw();
+
+        fetch(`/api/agenda?date=${encodeURIComponent(data)}`)
+          .then((res) => {
+            if (!res.ok) throw new Error("slots_failed");
+            return res.json();
+          })
+          .then((json) => {
+            state.slotsLoading = false;
+            state.availableSlots = json.slots || [];
+            draw();
+          })
+          .catch(() => {
+            state.slotsLoading = false;
+            state.slotsError = true;
+            draw();
+          });
+      });
+    }
+
+    container.querySelectorAll(".slot-btn:not(.taken)").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        state.scheduleForm.horario = btn.dataset.time;
+        draw();
+      });
+    });
+
+    const scheduleForm = container.querySelector("#diag-schedule-form");
+    if (scheduleForm) {
+      scheduleForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const data = new FormData(scheduleForm);
+        state.scheduleForm = {
+          ...state.scheduleForm,
+          empresa: data.get("empresa") || "",
+          nome: data.get("nome") || "",
+          email: data.get("email") || "",
+          telefone: data.get("telefone") || "",
+          data: data.get("data") || state.scheduleForm.data,
+        };
+
+        const errs = {};
+        if (!state.scheduleForm.empresa.trim()) errs.empresa = "Obrigatório";
+        if (!state.scheduleForm.nome.trim()) errs.nome = "Obrigatório";
+        if (!state.scheduleForm.email.trim() || !/\S+@\S+\.\S+/.test(state.scheduleForm.email)) errs.email = "E-mail inválido";
+        if (!state.scheduleForm.telefone.trim()) errs.telefone = "Obrigatório";
+        if (!state.scheduleForm.data) errs.data = "Selecione uma data";
+        if (!state.scheduleForm.horario) errs.horario = "Selecione um horário";
+
+        state.scheduleErrors = errs;
+        state.scheduleSendError = false;
+
+        if (Object.keys(errs).length > 0) {
+          draw();
+          return;
+        }
+
+        state.scheduleLoading = true;
+        draw();
+
+        const honeypot = data.get("website") || "";
+        const cfg = DIAGNOSTICOS[state.diagKey];
+        const inicio = `${state.scheduleForm.data}T${state.scheduleForm.horario}:00-03:00`;
+
+        fetch("/api/agenda", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            empresa: state.scheduleForm.empresa,
+            nome: state.scheduleForm.nome,
+            email: state.scheduleForm.email,
+            telefone: state.scheduleForm.telefone,
+            inicio,
+            diagTipo: cfg.diagTipo,
+            website: honeypot,
+          }),
+        })
+          .then(async (res) => {
+            const json = await res.json().catch(() => ({}));
+            if (!res.ok || !json.ok) throw new Error(json.error || "schedule_failed");
+            state.scheduleLoading = false;
+            state.scheduleSent = true;
+            draw();
+          })
+          .catch((err) => {
+            state.scheduleLoading = false;
+            if (err.message === "slot_taken") {
+              state.scheduleErrors = { horario: "Esse horário acabou de ser reservado. Escolha outro." };
+              state.scheduleForm.horario = "";
+              // Recarrega os horários do dia para refletir a disponibilidade atual.
+              fetch(`/api/agenda?date=${encodeURIComponent(state.scheduleForm.data)}`)
+                .then((res) => res.json())
+                .then((json) => {
+                  state.availableSlots = json.slots || [];
+                  draw();
+                })
+                .catch(() => draw());
+            } else {
+              state.scheduleSendError = true;
+              draw();
+            }
+          });
       });
     }
 
