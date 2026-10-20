@@ -381,7 +381,7 @@ export function renderDiagnostico(container) {
           </div>
           <div class="form-field ${e.data ? "error" : ""}">
             <label>${icon("calendar")} Data <span class="required">*</span></label>
-            <input type="date" name="data" min="${minDateStr()}" value="${f.data}" />
+            <input type="text" name="data" id="diag-schedule-date" placeholder="Selecione uma data" value="${f.data}" readonly />
             ${e.data ? `<p class="error-text">${e.data}</p>` : ""}
           </div>
           <div class="form-field ${e.horario ? "error" : ""}">
@@ -475,38 +475,49 @@ export function renderDiagnostico(container) {
       }
     });
 
-    const scheduleDateInput = container.querySelector('#diag-schedule-form input[name="data"]');
-    if (scheduleDateInput) {
-      scheduleDateInput.addEventListener("change", () => {
-        const data = scheduleDateInput.value;
-        state.scheduleForm.data = data;
-        state.scheduleForm.horario = "";
-        state.slotsError = false;
-        state.availableSlots = [];
+    const loadSlotsForDate = (data) => {
+      state.scheduleForm.data = data;
+      state.scheduleForm.horario = "";
+      state.slotsError = false;
+      state.availableSlots = [];
 
-        if (!data) {
-          draw();
-          return;
-        }
-
-        state.slotsLoading = true;
+      if (!data) {
         draw();
+        return;
+      }
 
-        fetch(`/api/agenda?date=${encodeURIComponent(data)}`)
-          .then((res) => {
-            if (!res.ok) throw new Error("slots_failed");
-            return res.json();
-          })
-          .then((json) => {
-            state.slotsLoading = false;
-            state.availableSlots = json.slots || [];
-            draw();
-          })
-          .catch(() => {
-            state.slotsLoading = false;
-            state.slotsError = true;
-            draw();
-          });
+      state.slotsLoading = true;
+      draw();
+
+      fetch(`/api/agenda?date=${encodeURIComponent(data)}`)
+        .then((res) => {
+          if (!res.ok) throw new Error("slots_failed");
+          return res.json();
+        })
+        .then((json) => {
+          state.slotsLoading = false;
+          state.availableSlots = json.slots || [];
+          draw();
+        })
+        .catch(() => {
+          state.slotsLoading = false;
+          state.slotsError = true;
+          draw();
+        });
+    };
+
+    const scheduleDateInput = container.querySelector("#diag-schedule-date");
+    if (scheduleDateInput && window.flatpickr) {
+      window.flatpickr(scheduleDateInput, {
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altInputClass: "schedule-date-display",
+        altFormat: "d/m/Y",
+        locale: (window.flatpickr.l10ns && window.flatpickr.l10ns.pt) || "default",
+        minDate: minDateStr(),
+        disable: [(date) => date.getDay() === 0 || date.getDay() === 6], // sem fins de semana
+        disableMobile: true,
+        onChange: (_dates, dateStr) => loadSlotsForDate(dateStr),
       });
     }
 
