@@ -1,7 +1,33 @@
 import { services, stats, whyUs, homeImages } from "../data.js";
 import { icon } from "../icons.js";
+import { createScheduleState, scheduleFormMarkup, wireScheduleForm } from "./schedule-widget.js";
 
-export function renderHome(container) {
+let state = createScheduleState();
+
+function scheduleSectionMarkup() {
+  if (state.showScheduleForm) {
+    return scheduleFormMarkup(state, {
+      formId: "home-schedule-form",
+      dateInputId: "home-schedule-date",
+      subjectMode: "input",
+      title: "Agende uma Reunião Gratuita",
+      description: "Conte em poucas palavras o assunto e escolha o melhor dia e horário — vamos confirmar a reunião com um de nossos especialistas.",
+    });
+  }
+  return `
+    <button type="button" id="home-want-schedule" class="diag-promo-card" style="width:100%;text-align:left;border:1px solid var(--card-border);cursor:pointer;">
+      <div class="diag-promo-icon">${icon("calendar-check")}</div>
+      <div class="diag-promo-text">
+        <span class="eyebrow">AGENDE AGORA</span>
+        <h2>Agende uma Reunião Gratuita</h2>
+        <p>Escolha o assunto, o melhor dia e horário, e converse diretamente com um de nossos especialistas — sem compromisso.</p>
+      </div>
+      <span class="btn btn-green diag-promo-btn">Agendar Reunião ${icon("arrow-right")}</span>
+    </button>
+  `;
+}
+
+function draw(container) {
   container.innerHTML = `
     <section class="hero">
       <div class="hero-bg">
@@ -54,6 +80,12 @@ export function renderHome(container) {
       </div>
     </section>
 
+    <section class="section bg-1">
+      <div class="container">
+        ${scheduleSectionMarkup()}
+      </div>
+    </section>
+
     <section class="section bg-2">
       <div class="feature-grid">
         <div>
@@ -95,4 +127,28 @@ export function renderHome(container) {
       </div>
     </section>
   `;
+  wire(container);
+}
+
+function wire(container) {
+  const triggerBtn = container.querySelector("#home-want-schedule");
+  if (triggerBtn) {
+    triggerBtn.addEventListener("click", () => {
+      state.showScheduleForm = true;
+      draw(container);
+    });
+  }
+
+  if (state.showScheduleForm) {
+    wireScheduleForm(container, state, () => draw(container), {
+      formId: "home-schedule-form",
+      dateInputId: "home-schedule-date",
+      subjectMode: "input",
+    });
+  }
+}
+
+export function renderHome(container) {
+  state = createScheduleState();
+  draw(container);
 }
