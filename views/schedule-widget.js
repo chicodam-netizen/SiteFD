@@ -256,6 +256,10 @@ export function wireScheduleForm(container, state, draw, opts) {
           state.scheduleLoading = false;
           state.scheduleSent = true;
           draw();
+          // Mostra a confirmação por um instante e depois recarrega a página,
+          // garantindo que o visitante volte a um estado limpo (sem o form
+          // preenchido) caso queira navegar ou agendar de novo.
+          setTimeout(() => window.location.reload(), 3000);
         })
         .catch((err) => {
           state.scheduleLoading = false;
