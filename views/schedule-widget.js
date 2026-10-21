@@ -61,6 +61,7 @@ export function scheduleFormMarkup(state, opts) {
         <div class="success-icon">${icon("calendar-check")}</div>
         <h3>${opts.successTitle || "Reunião agendada!"}</h3>
         <p>${opts.successText || "Confirmamos seu agendamento. Você vai receber um e-mail de confirmação com os detalhes, e nossa equipe entrará em contato em breve."}</p>
+        <button type="button" class="btn btn-green" id="${opts.formId}-ok-btn">OK</button>
       </div>
     `;
   }
@@ -128,6 +129,11 @@ export function scheduleFormMarkup(state, opts) {
  *   da API, que já aceita qualquer texto livre)
  */
 export function wireScheduleForm(container, state, draw, opts) {
+  const okBtn = container.querySelector(`#${opts.formId}-ok-btn`);
+  if (okBtn) {
+    okBtn.addEventListener("click", () => window.location.reload());
+  }
+
   const fields = opts.subjectMode === "input"
     ? ["empresa", "nome", "email", "telefone", "assunto"]
     : ["empresa", "nome", "email", "telefone"];
@@ -256,10 +262,6 @@ export function wireScheduleForm(container, state, draw, opts) {
           state.scheduleLoading = false;
           state.scheduleSent = true;
           draw();
-          // Mostra a confirmação por um instante e depois recarrega a página,
-          // garantindo que o visitante volte a um estado limpo (sem o form
-          // preenchido) caso queira navegar ou agendar de novo.
-          setTimeout(() => window.location.reload(), 3000);
         })
         .catch((err) => {
           state.scheduleLoading = false;
